@@ -1,10 +1,11 @@
 # redisx
-redisx
+
+一个轻量级的 redis client ，基于 jedis 进行的封装。（就这样描述先...）
 
 
-快速入门
+### 快速入门
 
-1.配置
+#### 1.配置
 
 ```yaml
 test.rd1:
@@ -13,7 +14,7 @@ test.rd1:
   db: 1
 ```
 
-2.bean 构建（以下代码以solon演示）
+#### 2.bean 构建（以下代码以solon演示）
 ```java
 @Configuration
 public class Config {
@@ -24,7 +25,7 @@ public class Config {
 }
 ```
 
-3.使用
+#### 3.使用
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)

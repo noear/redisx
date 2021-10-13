@@ -84,6 +84,14 @@ public class RedisSession implements AutoCloseable {
     }
 
     /**
+     * 尝试延期
+     * */
+    public void delay(int seconds) {
+        _seconds = seconds;
+        expirePush();
+    }
+
+    /**
      * 主键扫描
      *
      * @param keyPattern 模式（?表示1+, *表示0+）

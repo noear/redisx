@@ -406,8 +406,8 @@ public class RedisSession implements AutoCloseable {
      * */
     public RedisSession listAddRange(Collection<String> items) {
         Pipeline pip = jedis.pipelined();
-        for (String val : items) {
-            pip.lpush(_key, val); //左侧压进
+        for (String item : items) {
+            pip.lpush(_key, item); //左侧压进
         }
         pip.sync();
 
@@ -453,24 +453,24 @@ public class RedisSession implements AutoCloseable {
 
     //------------------
     //Sset::
-    public RedisSession setAdd(String val) {
-        jedis.sadd(_key, val); //左侧压进
+    public RedisSession setAdd(String item) {
+        jedis.sadd(_key, item); //左侧压进
         expirePush();
 
         return this;
     }
 
-    public RedisSession setDel(String val) {
-        jedis.srem(_key, val); //左侧压进
+    public RedisSession setDel(String item) {
+        jedis.srem(_key, item); //左侧压进
         expirePush();
 
         return this;
     }
 
-    public RedisSession setAddRange(Collection<String> vals) {
+    public RedisSession setAddRange(Collection<String> items) {
         Pipeline pip = jedis.pipelined();
-        for (String val : vals) {
-            pip.sadd(_key, val); //左侧压进
+        for (String item : items) {
+            pip.sadd(_key, item); //左侧压进
         }
         pip.sync();
 
@@ -491,32 +491,32 @@ public class RedisSession implements AutoCloseable {
         return jedis.srandmember(_key, count);
     }
 
-    public List<String> setScan(String valPattern, int count) {
+    public List<String> setScan(String itemPattern, int count) {
         String cursor = ScanParams.SCAN_POINTER_START;
 
         ScanParams p = new ScanParams();
         p.count(count);
-        p.match(valPattern);
+        p.match(itemPattern);
 
         return jedis.sscan(_key, cursor, p).getResult();
     }
 
-    public boolean setMatch(String valPattern) {
-        List<String> temp = setScan(valPattern, 1);
+    public boolean setMatch(String itemPattern) {
+        List<String> temp = setScan(itemPattern, 1);
         return (temp != null && temp.size() > 0);
     }
 
     //------------------
     //Sort set::
-    public RedisSession zsetAdd(double score, String val) {
-        jedis.zadd(_key, score, val);
+    public RedisSession zsetAdd(double score, String item) {
+        jedis.zadd(_key, score, item);
         expirePush();
 
         return this;
     }
 
-    public void zsetDel(String... vals) {
-        jedis.zrem(_key, vals);
+    public void zsetDel(String... items) {
+        jedis.zrem(_key, items);
     }
 
     public long zsetLen() {
@@ -528,8 +528,8 @@ public class RedisSession implements AutoCloseable {
     }
 
 
-    public long zsetIdx(String val) {
-        Long tmp = jedis.zrank(_key, val);
+    public long zsetIdx(String item) {
+        Long tmp = jedis.zrank(_key, item);
         if (tmp == null) {
             return -1;
         } else {
@@ -537,18 +537,18 @@ public class RedisSession implements AutoCloseable {
         }
     }
 
-    public List<Tuple> zsetScan(String valPattern, int count) {
+    public List<Tuple> zsetScan(String itemPattern, int count) {
         String cursor = ScanParams.SCAN_POINTER_START;
 
         ScanParams p = new ScanParams();
         p.count(count);
-        p.match(valPattern);
+        p.match(itemPattern);
 
         return jedis.zscan(_key, cursor, p).getResult();
     }
 
-    public boolean zsetMatch(String valPattern) {
-        List<Tuple> temp = zsetScan(valPattern, 1);
+    public boolean zsetMatch(String itemPattern) {
+        List<Tuple> temp = zsetScan(itemPattern, 1);
         return (temp != null && temp.size() > 0);
     }
 

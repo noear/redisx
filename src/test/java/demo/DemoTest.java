@@ -92,9 +92,9 @@ public class DemoTest {
         long num = atomic.get();
 
         atomic.increment();
-        atomic.increment();
+        atomic.incrementBy(2);
 
-        assert atomic.get() == (num + 2);
+        assert atomic.get() == (num + 3);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class DemoTest {
         });
     }
 
-    @Test
+//    @Test
     public void test7_bus() {
         //::redisX 增强接口使用
 

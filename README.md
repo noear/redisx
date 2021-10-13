@@ -119,9 +119,9 @@ public class DemoTest {
         long num = atomic.get();
 
         atomic.increment();
-        atomic.increment();
+        atomic.incrementBy(2);
 
-        assert atomic.get() == (num + 2);
+        assert atomic.get() == (num + 3);
     }
 
     @Test

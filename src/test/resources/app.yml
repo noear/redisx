@@ -1,8 +1,4 @@
 
-solon.app:
-  group: demo
-  name: demoapi
-
 test.rd1:
   server: localhost:6379
   password: 123456

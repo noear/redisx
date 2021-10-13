@@ -5,7 +5,7 @@
 
 # redisx
 
-一个轻量级的 redis client ，基于 jedis 进行的封装。（就这样描述先...）
+一个轻量级的 redis client ，基于 jedis 进行的友好封装。（就这样描述先...）
 
 
 ### 快速入门

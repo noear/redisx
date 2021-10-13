@@ -70,7 +70,7 @@ public class DemoTest {
 
     @Test
     public void test2_cache() throws Exception {
-        //::redisX 增加接口使用
+        //::redisX 增强接口使用
 
         //--- cache 使用
         RedisCache cache = client.getCache();
@@ -85,7 +85,7 @@ public class DemoTest {
 
     @Test
     public void test3_id() {
-        //::redisX 增加接口使用
+        //::redisX 增强接口使用
 
         //--- id 使用
         long user_id = 10000 + client.getId("id:user").generate();
@@ -97,9 +97,9 @@ public class DemoTest {
 
     @Test
     public void test4_lock() {
-        //::redisX 增加接口使用
+        //::redisX 增强接口使用
 
-        //--- lock 锁使用
+        //--- lock 使用
         if (client.getLock("user:121212").tryLock()) {
             assert true;
             //业务处理
@@ -110,10 +110,25 @@ public class DemoTest {
     }
 
     @Test
-    public void test5_queue() {
-        //::redisX 增加接口使用
+    public void test5_atomic() {
+        //::redisX 增强接口使用
 
-        //--- queue 锁使用
+        //--- atomic 使用
+        RedisAtomic atomic = client.getAtomic("user_count");
+
+        long num = atomic.get();
+
+        atomic.increment();
+        atomic.increment();
+
+        assert atomic.get() == (num + 2);
+    }
+
+    @Test
+    public void test6_queue() {
+        //::redisX 增强接口使用
+
+        //--- queue 使用
         RedisQueue queue = client.getQueue("queue:test");
         queue.add("1");
         queue.add("2");
@@ -131,10 +146,10 @@ public class DemoTest {
     }
 
     @Test
-    public void test6_topic() {
-        //::redisX 增加接口使用
+    public void test7_bus() {
+        //::redisX 增强接口使用
 
-        //--- bus 锁使用
+        //--- bus 使用
         RedisBus bus = client.getBus();
 
 
@@ -156,4 +171,5 @@ public class DemoTest {
         }, "topic:test");
     }
 }
+
 ```

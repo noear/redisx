@@ -1,3 +1,8 @@
+
+[![Maven Central](https://img.shields.io/maven-central/v/org.noear/redisx.svg)](https://mvnrepository.com/search?q=g:org.noear%20AND%20redisx)
+
+` QQ交流群：22200020 `
+
 # redisx
 
 一个轻量级的 redis client ，基于 jedis 进行的封装。（就这样描述先...）

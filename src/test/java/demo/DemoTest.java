@@ -44,7 +44,7 @@ public class DemoTest {
 
     @Test
     public void test2_cache() throws Exception {
-        //::redisX 快捷功能使用
+        //::redisX 增加接口使用
 
         //--- cache 使用
         RedisCache cache = client.getCache();
@@ -59,7 +59,7 @@ public class DemoTest {
 
     @Test
     public void test3_id() {
-        //::redisX 快捷功能使用
+        //::redisX 增加接口使用
 
         //--- id 使用
         long user_id = 10000 + client.getId("id:user").generate();
@@ -71,7 +71,7 @@ public class DemoTest {
 
     @Test
     public void test4_lock() {
-        //::redisX 快捷功能使用
+        //::redisX 增加接口使用
 
         //--- lock 锁使用
         if (client.getLock("user:121212").tryLock()) {
@@ -85,9 +85,9 @@ public class DemoTest {
 
     @Test
     public void test5_queue() {
-        //::redisX 快捷功能使用
+        //::redisX 增加接口使用
 
-        //--- lock 锁使用
+        //--- queue 锁使用
         RedisQueue queue = client.getQueue("queue:test");
         queue.add("1");
         queue.add("2");
@@ -104,14 +104,15 @@ public class DemoTest {
         });
     }
 
-//    @Test //下面这个单测会卡住
+//    @Test
     public void test6_topic() {
-        //::redisX 快捷功能使用
+        //::redisX 增加接口使用
 
-        //--- topic 锁使用
+        //--- bus 锁使用
         RedisBus bus = client.getBus();
 
 
+        //发消息 （如果没有订阅者，好像消息会白发）
         new Thread(() -> {
             while (true) {
                 try {
@@ -123,7 +124,7 @@ public class DemoTest {
             }
         }).start();
 
-        //这个函数，会卡死（如果没有订阅者，消息会白发）
+        //订阅消息（这个函数会卡住线程）
         bus.subscribe((topic, message) -> {
             System.out.println(topic + " = " + message);
         }, "topic:test");

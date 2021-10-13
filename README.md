@@ -12,6 +12,14 @@
 
 #### 1.配置
 
+```xml
+<dependency>
+    <groupId>org.noear</groupId>
+    <artifactId>redisx</artifactId>
+    <version>1.0</version>
+</dependency>
+```
+
 ```yaml
 test.rd1:
   server: localhost:6379

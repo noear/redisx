@@ -54,10 +54,18 @@ public class RedisSession implements AutoCloseable {
     /**
      * 设置超时（一般跟在 key 后面）
      *
-     * @param seconds 秒数（+num 过期秒数；-1 立即过期；-2 永不过期）
+     * @param seconds 秒数（+num 过期秒数；-1永不过期）
      * */
     public RedisSession expire(int seconds) {
         _seconds = seconds;
+        return this;
+    }
+
+    /**
+     * 设置为持续存在（即不超时）
+     * */
+    public RedisSession persist() {
+        _seconds = -1;
         return this;
     }
 
@@ -66,12 +74,8 @@ public class RedisSession implements AutoCloseable {
             jedis.expire(_key, _seconds);
         }
 
-        if (_seconds == -1L) {
-            jedis.expire(_key, -1L); //马上消失
-        }
-
-        if (_seconds == -2L) {
-            jedis.persist(_key); //永久有效
+        if(_seconds < 0){
+            jedis.persist(_key); //持续存在
         }
     }
 

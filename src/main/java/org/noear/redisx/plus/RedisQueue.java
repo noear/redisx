@@ -23,25 +23,25 @@ public class RedisQueue {
      * 添加
      * */
     public void add(String item) {
-        client.open(session -> session.key(queueName).expire(-2).listAdd(item));
+        client.open(s -> s.key(queueName).persist().listAdd(item));
     }
 
     /**
      * 推出
      * */
     public String pop() {
-        return client.openAndGet(session -> session.key(queueName).listPop());
+        return client.openAndGet(s -> s.key(queueName).listPop());
     }
 
     /**
      * 推出更多
      * */
     public void popAll(Consumer<String> consumer) {
-        client.open(session -> {
-            session.key(queueName);
+        client.open(s -> {
+            s.key(queueName);
 
             while (true) {
-                String item = session.listPop();
+                String item = s.listPop();
                 if (item == null) {
                     break;
                 } else {
@@ -55,6 +55,6 @@ public class RedisQueue {
      * 预览
      * */
     public String peek() {
-        return client.openAndGet(session -> session.key(queueName).listPeek());
+        return client.openAndGet(s -> s.key(queueName).listPeek());
     }
 }

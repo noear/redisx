@@ -19,36 +19,36 @@ public class RedisAtomic {
 
     /**
      * 获取值
-     * */
-    public long get(){
-        return client.openAndGet(session -> session.key(atomicName).getAsLong());
+     */
+    public long get() {
+        return client.openAndGet(s -> s.key(atomicName).getAsLong());
     }
 
     /**
      * 原子增量
-     * */
+     */
     public long increment() {
-        return client.openAndGet(session -> session.key(atomicName).expire(-2).incr());
+        return client.openAndGet(s -> s.key(atomicName).persist().incr());
     }
 
     /**
      * 原子增量
-     * */
+     */
     public long incrementBy(long num) {
-        return client.openAndGet(session -> session.key(atomicName).expire(-2).incr(num));
+        return client.openAndGet(s -> s.key(atomicName).persist().incr(num));
     }
 
     /**
      * 原子减量
-     * */
+     */
     public long decrement() {
-        return client.openAndGet(session -> session.key(atomicName).expire(-2).decr());
+        return client.openAndGet(s -> s.key(atomicName).persist().decr());
     }
 
     /**
      * 原子减量
-     * */
+     */
     public long decrementBy(long num) {
-        return client.openAndGet(session -> session.key(atomicName).expire(-2).incr(-num));
+        return client.openAndGet(s -> s.key(atomicName).persist().incr(-num));
     }
 }

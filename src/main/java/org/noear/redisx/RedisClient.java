@@ -85,7 +85,7 @@ import java.util.function.Function;
             maxIdle = 5;
         }
 
-        if(maxWaitMillis < 3000){
+        if (maxWaitMillis < 3000) {
             maxWaitMillis = 3000;
         }
 
@@ -118,7 +118,7 @@ import java.util.function.Function;
 
     /**
      * 打开会话，不返回值
-     * */
+     */
     public void open(Consumer<RedisSession> using) {
         try (RedisSession session = openSession()) {
             using.accept(session);
@@ -129,7 +129,7 @@ import java.util.function.Function;
 
     /**
      * 打开会话，并要一个值
-     * */
+     */
     public <T> T openAndGet(Function<RedisSession, T> using) {
         try (RedisSession session = openSession()) {
             return using.apply(session);
@@ -142,7 +142,7 @@ import java.util.function.Function;
 
     /**
      * 打开会话（需要自己关闭）
-     * */
+     */
     public RedisSession openSession() {
         Jedis jx = jedisPool.getResource();
         return new RedisSession(jx);
@@ -152,44 +152,51 @@ import java.util.function.Function;
 
     /**
      * 获取一个原子数
-     * */
-    public RedisAtomic getAtomic(String atomicName){
+     */
+    public RedisAtomic getAtomic(String atomicName) {
         return new RedisAtomic(this, atomicName);
     }
 
 
     /**
      * 获取一个总线
-     * */
-    public RedisBus getBus(){
+     */
+    public RedisBus getBus() {
         return new RedisBus(this);
     }
 
     /**
      * 获取一个缓存
-     * */
-    public RedisCache getCache(){
+     */
+    public RedisCache getCache() {
         return new RedisCache(this);
     }
 
     /**
+     * 获取一个哈希
+     */
+    public RedisHash getHash(String hashName) {
+        return new RedisHash(this, hashName);
+    }
+
+    /**
      * 获取一个锁
-     * */
-    public RedisLock getLock(String lockName){
+     */
+    public RedisLock getLock(String lockName) {
         return new RedisLock(this, lockName);
     }
 
     /**
      * 获取一个队列
-     * */
-    public RedisQueue getQueue(String queueName){
+     */
+    public RedisQueue getQueue(String queueName) {
         return new RedisQueue(this, queueName);
     }
 
     /**
      * 获取一个Id生成器
-     * */
-    public RedisId getId(String idName){
+     */
+    public RedisId getId(String idName) {
         return new RedisId(this, idName);
     }
 

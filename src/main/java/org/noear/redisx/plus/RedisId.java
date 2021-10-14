@@ -21,8 +21,7 @@ public class RedisId {
      * 生成
      */
     public long generate() {
-        //有效时间10年
-        return generate(60 * 60 * 24 * 365 * 10);
+        return client.openAndGet((s) -> s.key(idName).persist().incr());
     }
 
     /**
@@ -31,6 +30,6 @@ public class RedisId {
      * @param inSeconds 有效秒数
      */
     public long generate(int inSeconds) {
-        return client.openAndGet((session) -> session.key(idName).expire(inSeconds).incr(1l));
+        return client.openAndGet((s) -> s.key(idName).expire(inSeconds).incr());
     }
 }

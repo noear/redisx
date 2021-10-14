@@ -310,7 +310,7 @@ public class RedisSession implements AutoCloseable {
     /**
      * 哈希字段批量设置（管道模式操作）
      * */
-    public RedisSession hashSetAll(Map<String, String> map) {
+    public RedisSession hashSetAll(Map<? extends String, ? extends String> map) {
         Pipeline pip = jedis.pipelined();
 
         map.forEach((k, v) -> {
@@ -323,6 +323,7 @@ public class RedisSession implements AutoCloseable {
 
         return this;
     }
+
 
     /**
      * 哈希字段增量操作
@@ -365,6 +366,20 @@ public class RedisSession implements AutoCloseable {
      * */
     public HashAll hashGetAll() {
         return new HashAll(jedis.hgetAll(_key));
+    }
+
+    /**
+     * 哈希获取所有字段名
+     * */
+    public Set<String> hashGetAllKeys(){
+        return jedis.hkeys(_key);
+    }
+
+    /**
+     * 哈希获取所有字段值
+     * */
+    public List<String> hashGetAllValues() {
+        return jedis.hvals(_key);
     }
 
     /**

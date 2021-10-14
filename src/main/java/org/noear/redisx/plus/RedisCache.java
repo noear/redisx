@@ -24,7 +24,7 @@ public class RedisCache {
      * 存储
      * */
     public void store(String key, String val, int inSeconds) {
-        client.open(session -> session.key(key).expire(inSeconds).set(val));
+        client.open(s -> s.key(key).expire(inSeconds).set(val));
     }
 
     /**
@@ -36,21 +36,21 @@ public class RedisCache {
         byte[] bytes = SerializationUtil.serialize(obj);
         String val = Base64.getEncoder().encodeToString(bytes);
 
-        client.open(session -> session.key(key).expire(inSeconds).set(val));
+        client.open(s -> s.key(key).expire(inSeconds).set(val));
     }
 
     /**
      * 获取
      * */
     public String get(String key) {
-        return client.openAndGet(session -> session.key(key).get());
+        return client.openAndGet(s -> s.key(key).get());
     }
 
     /**
      * 获取并反序列化
      * */
     public <T> T getAndDeserialize(String key) {
-        String val = client.openAndGet(session -> session.key(key).get());
+        String val = client.openAndGet(s -> s.key(key).get());
 
         if (val == null) {
             return null;
@@ -64,6 +64,6 @@ public class RedisCache {
      * 移除
      * */
     public void remove(String key) {
-        client.open(session -> session.key(key).delete());
+        client.open(s -> s.key(key).delete());
     }
 }

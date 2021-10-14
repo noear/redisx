@@ -20,10 +20,10 @@ public class RedisBus {
 
     /**
      * 订阅
-     * */
+     */
     public void subscribe(BiConsumer<String, String> consumer, String... topics) {
-        client.open(session -> {
-            session.subscribe(new JedisPubSub() {
+        client.open(s -> {
+            s.subscribe(new JedisPubSub() {
                 @Override
                 public void onMessage(String channel, String message) {
                     consumer.accept(channel, message);
@@ -34,10 +34,8 @@ public class RedisBus {
 
     /**
      * 发布
-     * */
+     */
     public void publish(String topic, String message) {
-        client.open(session -> {
-            session.publish(topic, message);
-        });
+        client.open(s -> s.publish(topic, message));
     }
 }

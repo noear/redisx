@@ -206,6 +206,9 @@ public class RedisSession implements AutoCloseable {
         return val;
     }
 
+    /**
+     * 主键对应的值，原子增量
+     * */
     public long incr() {
         long val = jedis.incr(_key);
         expirePush();
@@ -213,6 +216,9 @@ public class RedisSession implements AutoCloseable {
         return val;
     }
 
+    /**
+     * 主键对应的值，原子减量
+     * */
     public long decr() {
         long val = jedis.decr(_key);
         expirePush();

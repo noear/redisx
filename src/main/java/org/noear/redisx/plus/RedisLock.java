@@ -18,17 +18,17 @@ public class RedisLock {
     }
 
     /**
-     * 尝试把 group_key 锁定给 inMaster
+     * 尝试锁
      *
      * @param inSeconds 锁定时间
-     * @param inMaster  锁持有人
+     * @param holder    持有人
      */
-    public boolean tryLock(int inSeconds, String inMaster) {
-        return client.openAndGet((ru) -> ru.key(lockName).expire(inSeconds).lock(inMaster));
+    public boolean tryLock(int inSeconds, String holder) {
+        return client.openAndGet((ru) -> ru.key(lockName).expire(inSeconds).lock(holder));
     }
 
     /**
-     * 尝试把 group_key 锁定
+     * 尝试锁
      *
      * @param inSeconds 锁定时间
      */
@@ -37,33 +37,20 @@ public class RedisLock {
     }
 
     /**
-     * 尝试把 group_key 锁定 （3秒）
+     * 尝试锁 （默认为3秒）
      */
     public boolean tryLock() {
         return tryLock(3);
     }
 
-    /**
-     * 检查是否已被锁定
-     */
-    public boolean isLocked() {
-        return client.openAndGet((ru) -> ru.key(lockName).exists());
-    }
-
-    /**
-     * 获取锁的值
-     */
-    public String getValue() {
-        return client.openAndGet((ru) -> ru.key(lockName).get());
-    }
 
 
     /**
      * 解锁
      */
-    public void unLock(String inMaster) {
+    public void unLock(String holder) {
         client.open((ru) -> {
-            if (inMaster == null || inMaster.equals(ru.key(lockName).get())) {
+            if (holder == null || holder.equals(ru.key(lockName).get())) {
                 ru.key(lockName).delete();
             }
         });
@@ -75,4 +62,19 @@ public class RedisLock {
     public void unLock() {
         unLock(null);
     }
+
+    /**
+     * 检查是否已被锁定
+     */
+    public boolean isLocked() {
+        return client.openAndGet((ru) -> ru.key(lockName).exists());
+    }
+
+    /**
+     * 获取持有人
+     */
+    public String getHolder() {
+        return client.openAndGet((ru) -> ru.key(lockName).get());
+    }
+
 }

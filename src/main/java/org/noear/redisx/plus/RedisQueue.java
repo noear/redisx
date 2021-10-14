@@ -27,14 +27,14 @@ public class RedisQueue {
     }
 
     /**
-     * 冒泡
+     * 推出
      * */
     public String pop() {
         return client.openAndGet(session -> session.key(queueName).listPop());
     }
 
     /**
-     * 冒泡更多
+     * 推出更多
      * */
     public void popAll(Consumer<String> consumer) {
         client.open(session -> {

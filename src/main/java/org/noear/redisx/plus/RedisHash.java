@@ -68,7 +68,7 @@ public class RedisHash implements Map<String,String> {
 
     @Override
     public String put(String field, String value) {
-        client.open(s -> s.key(hashName).hashSet(field, value));
+        client.open(s -> s.key(hashName).persist().hashSet(field, value));
 
         return value;
     }

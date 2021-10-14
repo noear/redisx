@@ -3,12 +3,9 @@ package demo;
 import demo.model.UserDo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.noear.redisx.plus.RedisAtomic;
+import org.noear.redisx.plus.*;
 import org.noear.solon.annotation.Inject;
 import org.noear.redisx.RedisClient;
-import org.noear.redisx.plus.RedisCache;
-import org.noear.redisx.plus.RedisQueue;
-import org.noear.redisx.plus.RedisBus;
 import org.noear.solon.test.SolonJUnit4ClassRunner;
 import org.noear.solon.test.SolonTest;
 
@@ -24,7 +21,7 @@ public class DemoTest {
     RedisClient client;
 
     @Test
-    public void test1() {
+    public void test() {
         //::redisX 基础接口使用
 
         client.open(session -> {
@@ -45,7 +42,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test2_cache() throws Exception {
+    public void test_cache() throws Exception {
         //::redisX 增强接口使用
 
         //--- cache 使用
@@ -59,8 +56,7 @@ public class DemoTest {
         assert "hello".equals(cache.get("item:1")) == false;
 
 
-        ////////////////////////////////
-
+        //--- cache 带序列化的使用
         UserDo userDo = new UserDo();
         userDo.id = 1212;
         userDo.name = "noear";
@@ -68,7 +64,9 @@ public class DemoTest {
         userDo.create_lng = 121239123.12;
         userDo.create_time = new Date();
 
+        //存储并序列化
         cache.storeAndSerialize("user:1212", userDo, 2);
+        //获取并反序列化
         UserDo userDo1 = cache.getAndDeserialize("user:1212");
         assert userDo1 != null;
 
@@ -80,7 +78,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test3_id() {
+    public void test_id() {
         //::redisX 增强接口使用
 
         //--- id 使用
@@ -92,7 +90,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test4_lock() {
+    public void test_lock() {
         //::redisX 增强接口使用
 
         //--- lock 使用
@@ -106,7 +104,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test5_atomic() {
+    public void test_atomic() {
         //::redisX 增强接口使用
 
         //--- atomic 使用
@@ -121,7 +119,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test6_queue() {
+    public void test_queue() {
         //::redisX 增强接口使用
 
         //--- queue 使用
@@ -142,7 +140,7 @@ public class DemoTest {
     }
 
 //    @Test
-    public void test7_bus() {
+    public void test_bus() {
         //::redisX 增强接口使用
 
         //--- bus 使用

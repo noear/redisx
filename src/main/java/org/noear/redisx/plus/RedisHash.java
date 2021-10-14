@@ -73,6 +73,23 @@ public class RedisHash implements Map<String,String> {
         return value;
     }
 
+    public void put(String field, int value) {
+        put(field, String.valueOf(value));
+    }
+
+    public void put(String field, long value) {
+        put(field, String.valueOf(value));
+    }
+
+    public void put(String field, float value) {
+        put(field, String.valueOf(value));
+    }
+
+    public void put(String field, double value) {
+        put(field, String.valueOf(value));
+    }
+
+
     @Override
     public String remove(Object field) {
         return client.openAndGet(s -> {

@@ -1,6 +1,7 @@
 package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
+import org.noear.redisx.utils.TextUtil;
 
 import java.util.Collection;
 import java.util.Map;
@@ -43,6 +44,27 @@ public class RedisHash implements Map<String,String> {
     public String get(Object field) {
         return client.openAndGet(s -> s.key(hashName).hashGet(field.toString()));
     }
+
+    public int getAsInt(String field) {
+        String tmp = this.get(field);
+        return TextUtil.isEmpty(tmp) ? 0 : Integer.parseInt(tmp);
+    }
+
+    public long getAsLong(String field) {
+        String tmp = this.get(field);
+        return TextUtil.isEmpty(tmp) ? 0L : Long.parseLong(tmp);
+    }
+
+    public float getAsFloat(String field) {
+        String tmp = this.get(field);
+        return TextUtil.isEmpty(tmp) ? 0 : Float.parseFloat(tmp);
+    }
+
+    public double getAsDouble(String field) {
+        String tmp = this.get(field);
+        return TextUtil.isEmpty(tmp) ? 0 : Double.parseDouble(tmp);
+    }
+
 
     @Override
     public String put(String field, String value) {

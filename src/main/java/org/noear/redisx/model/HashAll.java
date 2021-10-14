@@ -1,5 +1,7 @@
 package org.noear.redisx.model;
 
+import org.noear.redisx.utils.TextUtil;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -18,22 +20,22 @@ public class HashAll implements Map<String, String> {
 
     public int getAsInt(String field) {
         String tmp = this.get(field);
-        return tmp == null ? 0 : Integer.parseInt(tmp);
+        return TextUtil.isEmpty(tmp) ? 0 : Integer.parseInt(tmp);
     }
 
     public long getAsLong(String field) {
         String tmp = this.get(field);
-        return tmp == null ? 0L : Long.parseLong(tmp);
+        return TextUtil.isEmpty(tmp) ? 0L : Long.parseLong(tmp);
     }
 
     public float getAsFloat(String field) {
         String tmp = this.get(field);
-        return tmp == null ? 0 : Float.parseFloat(tmp);
+        return TextUtil.isEmpty(tmp) ? 0 : Float.parseFloat(tmp);
     }
 
     public double getAsDouble(String field) {
         String tmp = this.get(field);
-        return tmp == null ? 0 : Double.parseDouble(tmp);
+        return TextUtil.isEmpty(tmp) ? 0 : Double.parseDouble(tmp);
     }
 
 

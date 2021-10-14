@@ -1,7 +1,8 @@
 package org.noear.redisx;
 
 import org.noear.redisx.model.HashAll;
-import org.noear.redisx.utils.TextUtils;
+import org.noear.redisx.utils.AssertUtil;
+import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.params.SetParams;
 
@@ -47,6 +48,8 @@ public class RedisSession implements AutoCloseable {
      * 主键
      * */
     public RedisSession key(String key) {
+        AssertUtil.notEmpty(key,"key cannot be empty");
+
         _key = key;
         return this;
     }
@@ -175,7 +178,7 @@ public class RedisSession implements AutoCloseable {
      * */
     public long getAsLong() {
         String temp = get();
-        if (TextUtils.isEmpty(temp)) {
+        if (TextUtil.isEmpty(temp)) {
             return 0L;
         } else {
             return Long.parseLong(temp);
@@ -336,7 +339,7 @@ public class RedisSession implements AutoCloseable {
     public long hashGetAsLong(String field) {
         String temp = hashGet(field);
 
-        if (TextUtils.isEmpty(temp))
+        if (TextUtil.isEmpty(temp))
             return 0;
         else
             return Long.parseLong(temp);

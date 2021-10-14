@@ -1,7 +1,7 @@
 package org.noear.redisx;
 
 import org.noear.redisx.plus.*;
-import org.noear.redisx.utils.TextUtils;
+import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.function.Function;
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");
 
-        if (TextUtils.isEmpty(db)) {
+        if (TextUtil.isEmpty(db)) {
             throw new RuntimeException("RedisX:Properties lacks the db parameter!");
         }
 
@@ -56,15 +56,15 @@ import java.util.function.Function;
                     password,
                     db,
                     maxTotaol,
-                    (TextUtils.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
+                    (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
             );
         } else {
             initDo(server,
                     user,
                     password,
                     db,
-                    (TextUtils.isEmpty(maxTotaolStr) ? 0 : Integer.parseInt(maxTotaolStr)),
-                    (TextUtils.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
+                    (TextUtil.isEmpty(maxTotaolStr) ? 0 : Integer.parseInt(maxTotaolStr)),
+                    (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
             );
         }
     }

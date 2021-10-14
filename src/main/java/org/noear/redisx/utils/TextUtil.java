@@ -4,7 +4,7 @@ package org.noear.redisx.utils;
  * @author noear
  * @since 1.0
  */
-public class TextUtils {
+public class TextUtil {
     /**
      * 检查字符串是否为空
      *

@@ -583,6 +583,25 @@ public class RedisSession implements AutoCloseable {
     }
 
     //------------------
+    //geo::
+
+    public RedisSession geoAdd(double lng, double lat, String member){
+        jedis.geoadd(_key, lng, lat, member);
+        expirePush();
+        return this;
+    }
+
+    public RedisSession geoAddAll(Map<String, GeoCoordinate> memberMap) {
+        jedis.geoadd(_key, memberMap);
+        expirePush();
+        return this;
+    }
+
+    public List<GeoRadiusResponse> geoGetByRadius(double centerLng, double centerLat, double radius) {
+        return jedis.georadius(_key, centerLng, centerLat, radius, GeoUnit.KM);
+    }
+
+    //------------------
     //message::
 
 

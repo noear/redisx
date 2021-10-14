@@ -1,5 +1,6 @@
 package demo;
 
+import demo.model.UserDo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.noear.redisx.plus.RedisAtomic;
@@ -10,6 +11,8 @@ import org.noear.redisx.plus.RedisQueue;
 import org.noear.redisx.plus.RedisBus;
 import org.noear.solon.test.SolonJUnit4ClassRunner;
 import org.noear.solon.test.SolonTest;
+
+import java.util.Date;
 
 /**
  * @author noear 2021/10/12 created
@@ -54,6 +57,26 @@ public class DemoTest {
         Thread.sleep(3 * 1000);
 
         assert "hello".equals(cache.get("item:1")) == false;
+
+
+        ////////////////////////////////
+
+        UserDo userDo = new UserDo();
+        userDo.id = 1212;
+        userDo.name = "noear";
+        userDo.create_lat = 12.111111;
+        userDo.create_lng = 121239123.12;
+        userDo.create_time = new Date();
+
+        cache.storeAndSerialize("user:1212", userDo, 2);
+        UserDo userDo1 = cache.getAndDeserialize("user:1212");
+        assert userDo1 != null;
+
+        System.out.println(userDo1);
+
+        assert userDo1.create_lng == userDo.create_lng;
+        assert userDo1.create_lat == userDo.create_lat;
+        assert userDo1.create_time.getTime() == userDo.create_time.getTime();
     }
 
     @Test

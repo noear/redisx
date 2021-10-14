@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * @author noear
- * @since 1.0
+ * @since 1.1
  */
 
 public class HashAll implements Map<String, String> {

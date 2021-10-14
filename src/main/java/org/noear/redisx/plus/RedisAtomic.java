@@ -6,7 +6,7 @@ import org.noear.redisx.RedisClient;
  * Redis 原子数字
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
 public class RedisAtomic {
     private final RedisClient client;

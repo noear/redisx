@@ -6,7 +6,7 @@ import org.noear.redisx.RedisClient;
  * Redis 分布式锁
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  * */
 public class RedisLock {
     private final RedisClient client;

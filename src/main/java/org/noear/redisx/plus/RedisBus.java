@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
  * Redis 总线
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
 public class RedisBus {
     private final RedisClient client;

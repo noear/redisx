@@ -4,7 +4,7 @@ import org.noear.redisx.RedisClient;
 
 /**
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
 public class RedisCache {
     private final RedisClient client;

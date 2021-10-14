@@ -8,7 +8,7 @@ import java.util.function.Consumer;
  * Redis 队列
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
 public class RedisQueue {
     private final RedisClient client;

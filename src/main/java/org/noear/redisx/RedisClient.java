@@ -12,7 +12,7 @@ import java.util.function.Function;
  * Redis 客户端
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
  public class RedisClient {
     private JedisPool jedisPool;

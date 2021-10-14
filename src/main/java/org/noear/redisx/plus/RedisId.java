@@ -3,10 +3,10 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 
 /**
- * Redis Id
+ * Redis Id生成器
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  * */
 public class RedisId {
     private final RedisClient client;

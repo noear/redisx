@@ -14,7 +14,7 @@ import java.util.Set;
  * Redis 会话
  *
  * @author noear
- * @since 1.5
+ * @since 1.0
  */
 public class RedisSession implements AutoCloseable {
     private static final String LOCK_SUCCEED = "OK";

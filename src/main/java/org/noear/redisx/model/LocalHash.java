@@ -7,14 +7,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 本地哈希
+ *
  * @author noear
  * @since 1.1
  */
 
-public class HashAll implements Map<String, String> {
+public class LocalHash implements Map<String, String> {
     private Map<String, String> _map;
 
-    public HashAll(Map<String, String> map) {
+    public LocalHash(Map<String, String> map) {
         this._map = map;
     }
 

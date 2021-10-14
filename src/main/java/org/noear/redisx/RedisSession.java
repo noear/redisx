@@ -1,6 +1,6 @@
 package org.noear.redisx;
 
-import org.noear.redisx.model.HashAll;
+import org.noear.redisx.model.LocalHash;
 import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
@@ -364,8 +364,8 @@ public class RedisSession implements AutoCloseable {
     /**
      * 哈希获取所有字段
      * */
-    public HashAll hashGetAll() {
-        return new HashAll(jedis.hgetAll(_key));
+    public LocalHash hashGetAll() {
+        return new LocalHash(jedis.hgetAll(_key));
     }
 
     /**

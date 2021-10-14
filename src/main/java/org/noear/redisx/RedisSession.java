@@ -597,8 +597,12 @@ public class RedisSession implements AutoCloseable {
         return this;
     }
 
-    public List<GeoRadiusResponse> geoGetByRadius(double centerLng, double centerLat, double radius) {
-        return jedis.georadius(_key, centerLng, centerLat, radius, GeoUnit.KM);
+    public List<GeoRadiusResponse> geoGetByRadius(double centerLng, double centerLat, long radius) {
+        return jedis.georadius(_key, centerLng, centerLat, radius, GeoUnit.M);
+    }
+
+    public long geoDist(String member1, String member2) {
+        return jedis.geodist(_key, member1, member2, GeoUnit.M).longValue();
     }
 
     //------------------

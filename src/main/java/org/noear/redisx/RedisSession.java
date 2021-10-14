@@ -48,7 +48,7 @@ public class RedisSession implements AutoCloseable {
      * 主键
      * */
     public RedisSession key(String key) {
-        AssertUtil.notEmpty(key,"key cannot be empty");
+        AssertUtil.notEmpty(key,"redis key cannot be empty");
 
         _key = key;
         return this;
@@ -153,6 +153,8 @@ public class RedisSession implements AutoCloseable {
      * 设置主键对应的值
      * */
     public RedisSession set(String val) {
+        AssertUtil.notNull(val,"redis value cannot be null");
+
         jedis.set(_key, val);
         expirePush();
 

@@ -23,9 +23,7 @@ public class RedisCache {
     }
 
     public void storeAndSerialize(String key, Object obj, int inSeconds) {
-        if(obj == null){
-            return;
-        }
+        AssertUtil.notNull(obj,"redis value cannot be null");
 
         byte[] bytes = SerializationUtil.serialize(obj);
         String val = Base64.getEncoder().encodeToString(bytes);
@@ -39,6 +37,7 @@ public class RedisCache {
 
     public <T> T getAndDeserialize(String key) {
         String val = client.openAndGet(session -> session.key(key).get());
+
         if (val == null) {
             return null;
         } else {

@@ -42,18 +42,18 @@ public class DemoTest {
     }
 
     @Test
-    public void test_cache() throws Exception {
+    public void test_bucket() throws Exception {
         //::redisX 增强接口使用
 
         //--- cache 使用
-        RedisBucket cache = client.getBucket();
-        cache.store("item:1", "hello", 2);
+        RedisBucket bucket = client.getBucket();
+        bucket.store("item:1", "hello", 2);
 
-        assert "hello".equals(cache.get("item:1"));
+        assert "hello".equals(bucket.get("item:1"));
 
         Thread.sleep(3 * 1000);
 
-        assert "hello".equals(cache.get("item:1")) == false;
+        assert "hello".equals(bucket.get("item:1")) == false;
 
 
         //--- cache 带序列化的使用
@@ -65,9 +65,9 @@ public class DemoTest {
         userDo.create_time = new Date();
 
         //存储并序列化
-        cache.storeAndSerialize("user:1212", userDo, 2);
+        bucket.storeAndSerialize("user:1212", userDo, 2);
         //获取并反序列化
-        UserDo userDo1 = cache.getAndDeserialize("user:1212");
+        UserDo userDo1 = bucket.getAndDeserialize("user:1212");
         assert userDo1 != null;
 
         System.out.println(userDo1);

@@ -166,10 +166,10 @@ import java.util.function.Function;
     }
 
     /**
-     * 获取一个缓存
+     * 获取一个存储桶
      */
-    public RedisCache getCache() {
-        return new RedisCache(this);
+    public RedisBucket getBucket() {
+        return new RedisBucket(this);
     }
 
     /**

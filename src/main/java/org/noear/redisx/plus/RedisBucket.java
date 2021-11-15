@@ -7,15 +7,15 @@ import org.noear.redisx.utils.SerializationUtil;
 import java.util.Base64;
 
 /**
- * Redis cache
+ * Redis bucket
  *
  * @author noear
  * @since 1.0
  */
-public class RedisCache {
+public class RedisBucket {
     private final RedisClient client;
 
-    public RedisCache(RedisClient client) {
+    public RedisBucket(RedisClient client) {
         this.client = client;
     }
 

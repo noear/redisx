@@ -46,7 +46,7 @@ public class DemoTest {
         //::redisX 增强接口使用
 
         //--- cache 使用
-        RedisCache cache = client.getCache();
+        RedisBucket cache = client.getBucket();
         cache.store("item:1", "hello", 2);
 
         assert "hello".equals(cache.get("item:1"));

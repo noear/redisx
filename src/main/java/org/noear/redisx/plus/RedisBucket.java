@@ -10,7 +10,7 @@ import java.util.Base64;
  * Redis bucket
  *
  * @author noear
- * @since 1.0
+ * @since 1.3
  */
 public class RedisBucket {
     private final RedisClient client;

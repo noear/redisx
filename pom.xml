@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>redisx</artifactId>
-    <version>1.3</version>
+    <version>1.3.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -22,13 +22,13 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>${jedis.ver}</version>
+            <version>3.6.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon-test</artifactId>
-            <version>1.5.67</version>
+            <version>1.5.68</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

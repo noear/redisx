@@ -483,25 +483,21 @@ public class RedisSession implements AutoCloseable {
 
     //------------------
     //Sset::
-    public RedisSession setAdd(String item) {
-        jedis.sadd(_key, item); //左侧压进
+    public long setAdd(String item) {
+        long tmp = jedis.sadd(_key, item); //左侧压进
         expirePush();
 
-        return this;
+        return tmp;
     }
 
-    public RedisSession setDel(String item) {
-        jedis.srem(_key, item); //左侧压进
-        expirePush();
-
-        return this;
+    public long setDel(String item) {
+        long tmp = jedis.srem(_key, item); //左侧压进
+        return tmp;
     }
 
     public RedisSession setAddRange(Collection<String> items) {
         Pipeline pip = jedis.pipelined();
-        for (String item : items) {
-            pip.sadd(_key, item); //左侧压进
-        }
+        pip.sadd(_key, items.toArray(new String[items.size()])); //左侧压进
         pip.sync();
 
         expirePush();
@@ -545,8 +541,9 @@ public class RedisSession implements AutoCloseable {
         return this;
     }
 
-    public void zsetDel(String... items) {
-        jedis.zrem(_key, items);
+    public long zsetDel(String... items) {
+        long tmp = jedis.zrem(_key, items);
+        return tmp;
     }
 
     public long zsetLen() {
@@ -585,16 +582,16 @@ public class RedisSession implements AutoCloseable {
     //------------------
     //geo::
 
-    public RedisSession geoAdd(double lng, double lat, String member){
-        jedis.geoadd(_key, lng, lat, member);
+    public long geoAdd(double lng, double lat, String member){
+        long tmp = jedis.geoadd(_key, lng, lat, member);
         expirePush();
-        return this;
+        return tmp;
     }
 
-    public RedisSession geoAddAll(Map<String, GeoCoordinate> memberMap) {
-        jedis.geoadd(_key, memberMap);
+    public long geoAddAll(Map<String, GeoCoordinate> memberMap) {
+        long tmp = jedis.geoadd(_key, memberMap);
         expirePush();
-        return this;
+        return tmp;
     }
 
     public List<GeoRadiusResponse> geoGetByRadius(double centerLng, double centerLat, long radius) {

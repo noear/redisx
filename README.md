@@ -16,7 +16,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>redisx</artifactId>
-    <version>1.3</version>
+    <version>1.3.1</version>
 </dependency>
 ```
 
@@ -52,6 +52,7 @@ public class DemoTest {
         //::redisX 基础接口使用
 
         client.open(session -> {
+            //操作后会自动关闭会话
             session.key("order:1").expire(10).set("hello");
         });
 
@@ -69,21 +70,21 @@ public class DemoTest {
     }
 
     @Test
-    public void test_cache() throws Exception {
+    public void test_bucket() throws Exception {
         //::redisX 增强接口使用
 
-        //--- cache 使用
-        RedisCache cache = client.getCache();
-        cache.store("item:1", "hello", 2);
+        //--- bucket 使用
+        RedisBucket bucket = client.getBucket();
+        bucket.store("item:1", "hello", 2);
 
-        assert "hello".equals(cache.get("item:1"));
+        assert "hello".equals(bucket.get("item:1"));
 
         Thread.sleep(3 * 1000);
 
-        assert "hello".equals(cache.get("item:1")) == false;
+        assert "hello".equals(bucket.get("item:1")) == false;
 
 
-        //--- cache 带序列化的使用
+        //--- bucket 带序列化的使用
         UserDo userDo = new UserDo();
         userDo.id = 1212;
         userDo.name = "noear";
@@ -92,9 +93,9 @@ public class DemoTest {
         userDo.create_time = new Date();
 
         //存储并序列化
-        cache.storeAndSerialize("user:1212", userDo, 2);
+        bucket.storeAndSerialize("user:1212", userDo, 2);
         //获取并反序列化
-        UserDo userDo1 = cache.getAndDeserialize("user:1212");
+        UserDo userDo1 = bucket.getAndDeserialize("user:1212");
         assert userDo1 != null;
 
         System.out.println(userDo1);

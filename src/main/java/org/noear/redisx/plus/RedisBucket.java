@@ -5,6 +5,7 @@ import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.SerializationUtil;
 
 import java.util.Base64;
+import java.util.function.Supplier;
 
 /**
  * Redis bucket
@@ -22,16 +23,16 @@ public class RedisBucket {
 
     /**
      * 存储
-     * */
+     */
     public void store(String key, String val, int inSeconds) {
         client.open(s -> s.key(key).expire(inSeconds).set(val));
     }
 
     /**
      * 存储并序列化
-     * */
+     */
     public void storeAndSerialize(String key, Object obj, int inSeconds) {
-        AssertUtil.notNull(obj,"redis value cannot be null");
+        AssertUtil.notNull(obj, "redis value cannot be null");
 
         byte[] bytes = SerializationUtil.serialize(obj);
         String val = Base64.getEncoder().encodeToString(bytes);
@@ -41,14 +42,14 @@ public class RedisBucket {
 
     /**
      * 获取
-     * */
+     */
     public String get(String key) {
         return client.openAndGet(s -> s.key(key).get());
     }
 
     /**
      * 获取并反序列化
-     * */
+     */
     public <T> T getAndDeserialize(String key) {
         String val = client.openAndGet(s -> s.key(key).get());
 
@@ -60,9 +61,30 @@ public class RedisBucket {
         }
     }
 
+    public String getOrStore(String key, int inSeconds, Supplier<String> supplier) {
+        String val = get(key);
+        if (val == null) {
+            val = supplier.get();
+            store(key, val, inSeconds);
+        }
+
+        return val;
+    }
+
+    public <T> T getOrStoreAndSerialize(String key, int inSeconds, Supplier<T> supplier) {
+        T val = getAndDeserialize(key);
+
+        if (val == null) {
+            val = supplier.get();
+            storeAndSerialize(key, val, inSeconds);
+        }
+
+        return val;
+    }
+
     /**
      * 移除
-     * */
+     */
     public void remove(String key) {
         client.open(s -> s.key(key).delete());
     }

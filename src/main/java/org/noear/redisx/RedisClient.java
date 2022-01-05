@@ -101,7 +101,11 @@ import java.util.function.Function;
             password = null;
         }
 
-        jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, password, db);
+        if (TextUtil.isEmpty(user)) {
+            jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, password, db);
+        } else {
+            jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, user, password, db);
+        }
     }
 
     //兼容旧的faas

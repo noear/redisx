@@ -21,7 +21,7 @@ import java.util.function.Function;
         String db = prop.getProperty("db");
 
         if (TextUtil.isEmpty(db)) {
-            throw new RuntimeException("RedisX:Properties lacks the db parameter!");
+            throw new RuntimeException("RedisClient: Properties lacks the db parameter!");
         }
 
         initDo(prop, Integer.parseInt(db), 0);

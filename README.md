@@ -108,6 +108,31 @@ public class DemoTest {
     }
 
     @Test
+    public void test_bucket2() throws Exception {
+        //--- cache 使用
+        RedisBucket bucket = client.getBucket();
+
+        //--- cache 带序列化的使用
+        UserDo userDo = new UserDo();
+        userDo.id = 1212;
+        userDo.name = "noear";
+        userDo.create_lat = 12.111111;
+        userDo.create_lng = 121239123.12;
+        userDo.create_time = new Date();
+
+
+        UserDo userDo2 = bucket.getOrStoreAndSerialize("userex:1212", 2, () -> userDo);
+
+        UserDo userDo3 =bucket.getAndDeserialize("userex:1212");
+
+        assert userDo2 != null;
+        assert userDo3 != null;
+
+        assert userDo2.id == userDo3.id;
+        assert userDo2.create_time.getTime() == userDo3.create_time.getTime();
+    }
+
+    @Test
     public void test_id() {
         //::redisX 增强接口使用
 

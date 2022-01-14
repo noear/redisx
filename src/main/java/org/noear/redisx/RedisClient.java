@@ -31,31 +31,31 @@ import java.util.function.Function;
         initDo(prop, db, 0);
     }
 
-    public RedisClient(Properties prop, int db, int maxTotaol) {
-        initDo(prop, db, maxTotaol);
+    public RedisClient(Properties prop, int db, int maxTotal) {
+        initDo(prop, db, maxTotal);
     }
 
-    public RedisClient(String server, String user, String password, int db, int maxTotaol) {
-        initDo(server, user, password, db, maxTotaol, 0L);
+    public RedisClient(String server, String user, String password, int db, int maxTotal) {
+        initDo(server, user, password, db, maxTotal, 0L);
     }
 
-    public RedisClient(String server, String user, String password, int db, int maxTotaol, long maxWaitMillis) {
-        initDo(server, user, password, db, maxTotaol, maxWaitMillis);
+    public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
+        initDo(server, user, password, db, maxTotal, maxWaitMillis);
     }
 
-    private void initDo(Properties prop, int db, int maxTotaol) {
+    private void initDo(Properties prop, int db, int maxTotal) {
         String server = prop.getProperty("server");
         String user = prop.getProperty("user");
         String password = prop.getProperty("password");
         String maxWaitMillis = prop.getProperty("maxWaitMillis");
-        String maxTotaolStr = prop.getProperty("maxTotaol");
+        String maxTotalStr = prop.getProperty("maxTotal");
 
-        if (maxTotaol > 0) {
+        if (maxTotal > 0) {
             initDo(server,
                     user,
                     password,
                     db,
-                    maxTotaol,
+                    maxTotal,
                     (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
             );
         } else {
@@ -63,24 +63,24 @@ import java.util.function.Function;
                     user,
                     password,
                     db,
-                    (TextUtil.isEmpty(maxTotaolStr) ? 0 : Integer.parseInt(maxTotaolStr)),
+                    (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr)),
                     (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
             );
         }
     }
 
-    private void initDo(String server, String user, String password, int db, int maxTotaol, long maxWaitMillis) {
+    private void initDo(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
         JedisPoolConfig config = new JedisPoolConfig();
 
         if (db < 0) {
             db = 0;
         }
 
-        if (maxTotaol < 20) {
-            maxTotaol = 200;
+        if (maxTotal < 20) {
+            maxTotal = 200;
         }
 
-        int maxIdle = maxTotaol / 100;
+        int maxIdle = maxTotal / 100;
         if (maxIdle < 5) {
             maxIdle = 5;
         }
@@ -89,7 +89,7 @@ import java.util.function.Function;
             maxWaitMillis = 3000;
         }
 
-        config.setMaxTotal(maxTotaol);
+        config.setMaxTotal(maxTotal);
         config.setMaxIdle(maxIdle);
         config.setMaxWaitMillis(maxWaitMillis);
         config.setTestOnBorrow(false);

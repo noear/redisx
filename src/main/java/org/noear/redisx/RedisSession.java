@@ -126,9 +126,9 @@ public class RedisSession implements AutoCloseable {
     }
 
     /**
-     * 获取剩余过期时间
+     * 获取过期时间
      * */
-    public long expire(){
+    public long ttl(){
         return jedis.ttl(_key);
     }
 

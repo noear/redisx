@@ -112,13 +112,13 @@ public class RedisBucket {
      * 延期
      */
     public void delay(String key, int inSeconds) {
-        client.open(s -> s.key(key).expire(inSeconds).delay());
+        client.open(s -> s.key(key).delay(inSeconds));
     }
 
     /**
      * 获取剩余过期时间
      */
-    public long ttl(String key) {
-        return client.openAndGet(s -> s.key(key).ttl());
+    public long getExpire(String key) {
+        return client.openAndGet(s -> s.key(key).getExpire());
     }
 }

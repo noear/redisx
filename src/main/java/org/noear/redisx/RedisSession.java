@@ -125,12 +125,6 @@ public class RedisSession implements AutoCloseable {
         return (temp != null && temp.size() > 0);
     }
 
-    /**
-     * 获取过期时间
-     * */
-    public long ttl(){
-        return jedis.ttl(_key);
-    }
 
     /**
      * 主键是否存在
@@ -175,6 +169,15 @@ public class RedisSession implements AutoCloseable {
     public RedisSession set(long val) {
         return set(String.valueOf(val));
     }
+
+
+    /**
+     * 获取过期时间
+     * */
+    public long getExpire(){
+        return jedis.ttl(_key);
+    }
+
 
     /**
      * 获取主键对应的值

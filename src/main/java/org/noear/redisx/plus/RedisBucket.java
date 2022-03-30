@@ -6,6 +6,7 @@ import org.noear.redisx.utils.SerializationUtil;
 
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -126,7 +127,7 @@ public class RedisBucket {
     /**
      * 获取主键
      */
-    public Collection<String> keys(String pattern) {
+    public Set<String> keys(String pattern) {
         return client.openAndGet(s -> s.keys(pattern));
     }
 }

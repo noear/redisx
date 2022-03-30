@@ -88,4 +88,11 @@ public class RedisBucket {
     public void remove(String key) {
         client.open(s -> s.key(key).delete());
     }
+
+    /**
+     * 获取剩余过期时间
+     */
+    public long expire(String key) {
+        return client.openAndGet(s -> s.key(key).expire());
+    }
 }

@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis 会话
@@ -122,6 +123,13 @@ public class RedisSession implements AutoCloseable {
     public boolean match(String keyPattern) {
         List<String> temp = scan(keyPattern, 1);
         return (temp != null && temp.size() > 0);
+    }
+
+    /**
+     * 获取剩余过期时间
+     * */
+    public long expire(){
+        return jedis.ttl(_key);
     }
 
     /**

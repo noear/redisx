@@ -29,6 +29,13 @@ public class RedisBucket {
     }
 
     /**
+     * 永久存储
+     */
+    public void store(String key, String val) {
+        client.open(s -> s.key(key).persist().set(val));
+    }
+
+    /**
      * 存储并序列化
      */
     public void storeAndSerialize(String key, Object obj, int inSeconds) {
@@ -38,6 +45,18 @@ public class RedisBucket {
         String val = Base64.getEncoder().encodeToString(bytes);
 
         client.open(s -> s.key(key).expire(inSeconds).set(val));
+    }
+
+    /**
+     * 永久存储并序列化
+     */
+    public void storeAndSerialize(String key, Object obj) {
+        AssertUtil.notNull(obj, "redis value cannot be null");
+
+        byte[] bytes = SerializationUtil.serialize(obj);
+        String val = Base64.getEncoder().encodeToString(bytes);
+
+        client.open(s -> s.key(key).persist().set(val));
     }
 
     /**

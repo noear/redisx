@@ -148,6 +148,20 @@ public class RedisSession implements AutoCloseable {
     }
 
 
+    /**
+     * 获取剩余时间
+     * */
+    public long ttl(){
+        return jedis.ttl(_key);
+    }
+
+    /**
+     * 获取主键
+     * */
+    public Set<String> keys(String pattern){
+        return jedis.keys(pattern);
+    }
+
     //------
     //value::
 
@@ -170,13 +184,6 @@ public class RedisSession implements AutoCloseable {
         return set(String.valueOf(val));
     }
 
-
-    /**
-     * 获取过期时间
-     * */
-    public long getExpire(){
-        return jedis.ttl(_key);
-    }
 
 
     /**
@@ -205,6 +212,7 @@ public class RedisSession implements AutoCloseable {
     public List<String> getMore(String... keys) {
         return jedis.mget(keys);
     }
+
 
 
     /**

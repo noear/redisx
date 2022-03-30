@@ -5,6 +5,7 @@ import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.SerializationUtil;
 
 import java.util.Base64;
+import java.util.Collection;
 import java.util.function.Supplier;
 
 /**
@@ -116,9 +117,16 @@ public class RedisBucket {
     }
 
     /**
-     * 获取剩余过期时间
+     * 获取剩余时间
      */
-    public long getExpire(String key) {
-        return client.openAndGet(s -> s.key(key).getExpire());
+    public long ttl(String key) {
+        return client.openAndGet(s -> s.key(key).ttl());
+    }
+
+    /**
+     * 获取主键
+     */
+    public Collection<String> keys(String pattern) {
+        return client.openAndGet(s -> s.keys(pattern));
     }
 }

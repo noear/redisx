@@ -16,6 +16,14 @@ import java.util.function.Function;
  */
  public class RedisClient {
     private JedisPool jedisPool;
+    private String keyPrefix;
+
+    /**
+     * 获取key的前缀
+     * */
+    public String getKeyPrefix() {
+        return keyPrefix;
+    }
 
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");
@@ -49,6 +57,8 @@ import java.util.function.Function;
         String password = prop.getProperty("password");
         String maxWaitMillis = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
+
+        this.keyPrefix = prop.getProperty("keyPrefix");
 
         if (maxTotal > 0) {
             initDo(server,
@@ -149,7 +159,7 @@ import java.util.function.Function;
      */
     public RedisSession openSession() {
         Jedis jx = jedisPool.getResource();
-        return new RedisSession(jx);
+        return new RedisSession(jx, keyPrefix);
     }
 
     ////////////////////

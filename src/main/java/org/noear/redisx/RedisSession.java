@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Redis 会话
@@ -22,9 +21,11 @@ public class RedisSession implements AutoCloseable {
     private static final String LOCK_SUCCEED = "OK";
 
     private final Jedis jedis;
+    private final String keyPrefix;
 
-    protected RedisSession(Jedis jedis) {
+    protected RedisSession(Jedis jedis, String keyPrefix) {
         this.jedis = jedis;
+        this.keyPrefix = keyPrefix;
     }
 
     private boolean _close = false;
@@ -49,9 +50,14 @@ public class RedisSession implements AutoCloseable {
      * 主键
      * */
     public RedisSession key(String key) {
-        AssertUtil.notEmpty(key,"redis key cannot be empty");
+        AssertUtil.notEmpty(key, "redis key cannot be empty");
 
-        _key = key;
+        if (TextUtil.isEmpty(keyPrefix)) {
+            _key = key;
+        } else {
+            _key = keyPrefix + key;
+        }
+
         return this;
     }
 

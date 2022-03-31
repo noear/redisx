@@ -27,6 +27,7 @@ test.rd1:
   server: localhost:6379
   password: 123456
   db: 1
+  keyPrefix: "test:" #如无必要，勿加
 ```
 
 #### 2.bean 构建（以下代码以solon演示）

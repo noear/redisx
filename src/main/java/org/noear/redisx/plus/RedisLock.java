@@ -18,6 +18,13 @@ public class RedisLock {
     }
 
     /**
+     * 获取持有人
+     */
+    public String getHolder() {
+        return client.openAndGet((s) -> s.key(lockName).get());
+    }
+
+    /**
      * 尝试锁
      *
      * @param inSeconds 锁定时间
@@ -68,13 +75,6 @@ public class RedisLock {
      */
     public boolean isLocked() {
         return client.openAndGet((s) -> s.key(lockName).exists());
-    }
-
-    /**
-     * 获取持有人
-     */
-    public String getHolder() {
-        return client.openAndGet((s) -> s.key(lockName).get());
     }
 
 }

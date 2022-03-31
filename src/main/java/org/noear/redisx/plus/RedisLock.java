@@ -77,4 +77,10 @@ public class RedisLock {
         return client.openAndGet((s) -> s.key(lockName).exists());
     }
 
+    /**
+     * 获取剩余时间
+     */
+    public long ttl(){
+        return client.openAndGet((s) -> s.key(lockName).ttl());
+    }
 }

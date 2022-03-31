@@ -15,15 +15,14 @@ import java.util.function.Function;
  * @since 1.0
  */
  public class RedisClient {
-    private JedisPool jedisPool;
-    private String keyPrefix;
-
     /**
-     * 获取key的前缀
-     * */
-    public String getKeyPrefix() {
-        return keyPrefix;
-    }
+     * 连接池
+     */
+    private JedisPool jedisPool;
+    /**
+     * key的前缀
+     */
+    private String keyPrefix;
 
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");

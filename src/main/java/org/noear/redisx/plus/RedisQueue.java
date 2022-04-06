@@ -2,6 +2,7 @@ package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
 
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -25,6 +26,17 @@ public class RedisQueue {
     public void add(String item) {
         client.open(s -> s.key(queueName).persist().listAdd(item));
     }
+
+
+    /**
+     * 添加全部
+     * */
+    public void addAll(Collection<String> items) {
+        client.open(s -> {
+            s.key(queueName).persist().listAddRange(items);
+        });
+    }
+
 
     /**
      * 推出

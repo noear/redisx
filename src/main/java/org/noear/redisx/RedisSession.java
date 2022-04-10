@@ -54,7 +54,7 @@ public class RedisSession implements AutoCloseable {
     }
 
     /**
-     * 直接删除主键
+     * 删除一批主键
      * */
     public Long deleteKeys(Collection<String> keys) {
         if (keys == null || keys.isEmpty()) {
@@ -63,6 +63,18 @@ public class RedisSession implements AutoCloseable {
 
         String[] keyAry = new String[keys.size()];
         return jedis.del(keys.toArray(keyAry));
+    }
+
+    /**
+     * 检查一批主键是否存在
+     * */
+    public Long existsKeys(Collection<String> keys) {
+        if (keys == null || keys.isEmpty()) {
+            return 0L;
+        }
+
+        String[] keyAry = new String[keys.size()];
+        return jedis.exists(keys.toArray(keyAry));
     }
 
     /**

@@ -104,10 +104,34 @@ public class RedisBucket {
     }
 
     /**
+     * 检查是否存在
+     * */
+    public Boolean exists(String key){
+        return client.openAndGet(s -> s.key(key).exists());
+    }
+
+    /**
+     * 检查是多个主键是否存在
+     * */
+    public Long existsByKeys(Collection<String> keys){
+        return client.openAndGet(s -> s.existsKeys(keys));
+    }
+
+    /**
+     * 检查一批匹配模式的主键是否存在
+     * */
+    public Long existsByPattern(String pattern) {
+        return client.openAndGet(s -> {
+            Set<String> keys = s.keys(pattern);
+            return s.existsKeys(keys);
+        });
+    }
+
+    /**
      * 移除
      */
-    public void remove(String key) {
-        client.open(s -> s.key(key).delete());
+    public Boolean remove(String key) {
+        return client.openAndGet(s -> s.key(key).delete());
     }
 
     /**
@@ -118,7 +142,7 @@ public class RedisBucket {
     }
 
     /**
-     * 根据模式移除主键
+     * 移除一批匹配模式的主键
      * */
     public Long removeByPattern(String pattern) {
         return client.openAndGet(s -> {

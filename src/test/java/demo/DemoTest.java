@@ -100,6 +100,10 @@ public class DemoTest {
 
         assert userDo2.id == userDo3.id;
         assert userDo2.create_time.getTime() == userDo3.create_time.getTime();
+
+
+        //移除一批匹配模式的主键
+        bucket.removeByPattern("item:");
     }
 
     @Test

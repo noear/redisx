@@ -46,6 +46,19 @@ public class RedisSession implements AutoCloseable {
     private String _key;
     private long _seconds;
 
+
+    /**
+     * 直接删除主键
+     * */
+    public Long deleteKeys(Collection<String> keys) {
+        if (keys == null || keys.isEmpty()) {
+            return 0L;
+        }
+
+        String[] keyAry = new String[keys.size()];
+        return jedis.del(keys.toArray(keyAry));
+    }
+
     /**
      * 主键
      * */

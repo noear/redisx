@@ -111,6 +111,23 @@ public class RedisBucket {
     }
 
     /**
+     * 移除多个主键
+     * */
+    public Long removeByKeys(Collection<String> keys) {
+        return client.openAndGet(s -> s.deleteKeys(keys));
+    }
+
+    /**
+     * 根据模式移除主键
+     * */
+    public Long removeByPattern(String pattern) {
+        return client.openAndGet(s -> {
+            Set<String> keys = s.keys(pattern);
+            return s.deleteKeys(keys);
+        });
+    }
+
+    /**
      * 延期
      */
     public void delay(String key, int inSeconds) {
@@ -130,4 +147,6 @@ public class RedisBucket {
     public Set<String> keys(String pattern) {
         return client.openAndGet(s -> s.keys(pattern));
     }
+
+
 }

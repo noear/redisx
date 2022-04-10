@@ -46,6 +46,12 @@ public class RedisSession implements AutoCloseable {
     private String _key;
     private long _seconds;
 
+    /**
+     * 获取jedis原始对象
+     * */
+    public Jedis jedis() {
+        return jedis;
+    }
 
     /**
      * 直接删除主键

@@ -21,11 +21,9 @@ public class RedisSession implements AutoCloseable {
     private static final String LOCK_SUCCEED = "OK";
 
     private final Jedis jedis;
-    private final String keyPrefix;
 
-    protected RedisSession(Jedis jedis, String keyPrefix) {
+    protected RedisSession(Jedis jedis) {
         this.jedis = jedis;
-        this.keyPrefix = keyPrefix;
     }
 
     private boolean _close = false;
@@ -82,13 +80,7 @@ public class RedisSession implements AutoCloseable {
      * */
     public RedisSession key(String key) {
         AssertUtil.notEmpty(key, "redis key cannot be empty");
-
-        if (TextUtil.isEmpty(keyPrefix)) {
-            _key = key;
-        } else {
-            _key = keyPrefix + key;
-        }
-
+        _key = key;
         return this;
     }
 

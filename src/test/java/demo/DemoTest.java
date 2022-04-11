@@ -38,6 +38,12 @@ public class DemoTest {
                     .hashSet("sex", "1");
         });
 
+        client.open(session -> {
+            session.key("user_link:1").expire(10)
+                    .listAdd("test1")
+                    .listAdd("test2");
+        });
+
         assert true;
     }
 
@@ -148,11 +154,39 @@ public class DemoTest {
     }
 
     @Test
+    public void test_list() {
+        //::redisX 增强接口使用
+
+        //--- queue 使用
+        RedisList list = client.getList("list:test");
+        list.clear();
+
+        list.add("1");
+        list.add("2");
+
+        assert "1".equals(list.get(0));
+        assert "2".equals(list.get(1));
+        assert list.get(2) == null;
+
+        list.add("3");
+        list.add("4");
+
+        assert "3".equals(list.get(2));
+        assert "4".equals(list.get(3));
+
+        for(String item : list.getAll()){
+            System.out.println("test_list: " + item);
+        }
+    }
+
+    @Test
     public void test_queue() {
         //::redisX 增强接口使用
 
         //--- queue 使用
         RedisQueue queue = client.getQueue("queue:test");
+        queue.clear();
+
         queue.add("1");
         queue.add("2");
 
@@ -163,8 +197,11 @@ public class DemoTest {
         queue.add("3");
         queue.add("4");
 
+        assert "3".equals(queue.peek());
+        assert "3".equals(queue.peek());
+
         queue.popAll(item -> {
-            System.out.println("test5_queue: " + item);
+            System.out.println("test_queue: " + item);
         });
     }
 

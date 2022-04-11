@@ -517,7 +517,7 @@ public class RedisSession implements AutoCloseable {
      * 列表预览
      * */
     public String listPeek() {
-        return listGet(0); //右侧推出
+        return jedis.lindex(_key, -1);  //右侧推出（先进先出）
     }
 
     /**

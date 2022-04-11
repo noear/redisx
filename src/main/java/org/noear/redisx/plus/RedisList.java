@@ -32,8 +32,10 @@ public class RedisList {
      * 移除某个位置的项
      */
     public String removeAt(int index) {
+        int aryIndex = -index - 1;
+
         return client.openAndGet(s -> {
-            String element = s.key(listName).listGet(index);
+            String element = s.key(listName).listGet(aryIndex);
             if (element != null) {
                 s.listDel(element);
             }
@@ -53,14 +55,17 @@ public class RedisList {
      * 获取某个位置的项
      */
     public String get(int index) {
-        return client.openAndGet(s -> s.key(listName).listGet(index));
+        int aryIndex = -index - 1;
+        return client.openAndGet(s -> s.key(listName).listGet(aryIndex));
     }
 
     /**
      * 获取某个位置区间的项
      */
     public List<String> getRange(int fromIndex, int toIndex) {
-        return client.openAndGet(s -> s.key(listName).listGetRange(fromIndex, toIndex));
+        int aryFromIndex = -fromIndex - 1;
+        int aryToIndex = -toIndex - 1;
+        return client.openAndGet(s -> s.key(listName).listGetRange(aryFromIndex, aryToIndex));
     }
 
     /**

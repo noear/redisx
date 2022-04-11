@@ -22,14 +22,11 @@ public class DemoTest {
 
     @Test
     public void test() {
-        //::RedisX 基础接口使用
-
         client.open(session -> {
             session.key("order:1").expire(10).set("hello");
         });
 
         String item_1 = client.openAndGet(session -> session.key("order:1").get());
-
         assert item_1 != null;
 
         client.open(session -> {
@@ -49,10 +46,9 @@ public class DemoTest {
 
     @Test
     public void test_bucket() throws Exception {
-        //::RedisX 增强接口使用
-
         //--- bucket 使用
         RedisBucket bucket = client.getBucket();
+
         bucket.store("item:1", "hello", 2);
 
         assert "hello".equals(bucket.get("item:1"));
@@ -60,35 +56,13 @@ public class DemoTest {
         Thread.sleep(3 * 1000);
 
         assert "hello".equals(bucket.get("item:1")) == false;
-
-
-        //--- bucket 带序列化的使用
-        UserDo userDo = new UserDo();
-        userDo.id = 1212;
-        userDo.name = "noear";
-        userDo.create_lat = 12.111111;
-        userDo.create_lng = 121239123.12;
-        userDo.create_time = new Date();
-
-        //存储并序列化
-        bucket.storeAndSerialize("user:1212", userDo, 2);
-        //获取并反序列化
-        UserDo userDo1 = bucket.getAndDeserialize("user:1212");
-        assert userDo1 != null;
-
-        System.out.println(userDo1);
-
-        assert userDo1.create_lng == userDo.create_lng;
-        assert userDo1.create_lat == userDo.create_lat;
-        assert userDo1.create_time.getTime() == userDo.create_time.getTime();
     }
 
     @Test
     public void test_bucket2() throws Exception {
-        //--- bucket 使用
+        //--- bucket 带序列化的使用
         RedisBucket bucket = client.getBucket();
 
-        //--- bucket 带序列化的使用
         UserDo userDo = new UserDo();
         userDo.id = 1212;
         userDo.name = "noear";
@@ -114,11 +88,11 @@ public class DemoTest {
 
     @Test
     public void test_id() {
-        //::RedisX 增强接口使用
-
         //--- id 使用
-        long user_id = 10000 + client.getId("id:user").generate();
-        long order_id = 1000000 + client.getId("id:order").generate();
+        RedisId redisId = client.getId("id:user");
+
+        long user_id = 10000 + redisId.generate();
+        long order_id = 1000000 + redisId.generate();
 
         assert user_id > 10000;
         assert order_id > 1000000;
@@ -126,8 +100,6 @@ public class DemoTest {
 
     @Test
     public void test_lock() {
-        //::RedisX 增强接口使用
-
         //--- lock 使用
         if (client.getLock("user:121212").tryLock()) {
             assert true;
@@ -140,8 +112,6 @@ public class DemoTest {
 
     @Test
     public void test_atomic() {
-        //::RedisX 增强接口使用
-
         //--- atomic 使用
         RedisAtomic atomic = client.getAtomic("user_count");
 
@@ -155,8 +125,6 @@ public class DemoTest {
 
     @Test
     public void test_list() {
-        //::RedisX 增强接口使用
-
         //--- list 使用
         RedisList list = client.getList("list:test");
         list.clear();
@@ -184,8 +152,6 @@ public class DemoTest {
 
     @Test
     public void test_queue() {
-        //::RedisX 增强接口使用
-
         //--- queue 使用
         RedisQueue queue = client.getQueue("queue:test");
         queue.clear();
@@ -210,11 +176,8 @@ public class DemoTest {
 
 //    @Test
     public void test_bus() {
-        //::RedisX 增强接口使用
-
         //--- bus 使用
         RedisBus bus = client.getBus();
-
 
         //发消息 （如果没有订阅者，好像消息会白发）
         new Thread(() -> {

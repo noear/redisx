@@ -174,7 +174,10 @@ public class DemoTest {
         assert "3".equals(list.get(2));
         assert "4".equals(list.get(3));
 
-        for(String item : list.getAll()){
+        list.removeAt(3);
+        assert list.get(3) == null;
+
+        for (String item : list.getAll()) {
             System.out.println("test_list: " + item);
         }
     }

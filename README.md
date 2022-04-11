@@ -4,7 +4,7 @@
 [![JDK-8+](https://img.shields.io/badge/JDK-8+-green.svg)](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html)
 [![QQ交流群](https://img.shields.io/badge/QQ交流群-22200020-orange)](https://jq.qq.com/?_wv=1027&k=kjB5JNiC)
 
-# redisx
+# RedisX
 
 一个轻量级的 redis client ，基于 jedis 进行的友好封装。（就这样描述先...）
 

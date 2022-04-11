@@ -9,9 +9,9 @@
 一个轻量级的 redis client ，基于 jedis 进行的友好封装。（就这样描述先...）
 
 
-### 快速入门
+## 快速入门
 
-#### 1.配置
+### 1.配置
 
 ```xml
 <dependency>
@@ -28,7 +28,7 @@ test.rd1:
   db: 1
 ```
 
-#### 2.bean 构建（以下代码以solon演示）
+### 2.bean 构建（以下代码以solon演示）
 ```java
 @Configuration
 public class Config {
@@ -39,9 +39,9 @@ public class Config {
 }
 ```
 
-#### 3.使用
+### 3.使用
 
-##### 基本会话接口操作
+#### 基本会话接口操作
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -76,7 +76,7 @@ public class DemoTest {
 }
 ```
 
-##### 增强对象操作之 - RedisBucket
+#### 增强对象操作之 - RedisBucket
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -129,7 +129,7 @@ public class DemoTest {
 }
 ```
 
-##### 增强对象操作之 - RedisId
+#### 增强对象操作之 - RedisId
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -153,7 +153,7 @@ public class DemoTest {
 ```
 
 
-##### 增强对象操作之 - RedisLock
+#### 增强对象操作之 - RedisLock
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -177,7 +177,7 @@ public class DemoTest {
 ```
 
 
-##### 增强对象操作之 - RedisAtomic
+#### 增强对象操作之 - RedisAtomic
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -201,9 +201,7 @@ public class DemoTest {
 }
 ```
 
-
-
-##### 增强对象操作之 - RedisList
+#### 增强对象操作之 - RedisList
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -243,7 +241,7 @@ public class DemoTest {
 
 
 
-##### 增强对象操作之 - RedisQueue
+#### 增强对象操作之 - RedisQueue
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -279,7 +277,7 @@ public class DemoTest {
 ```
 
 
-##### 增强对象操作之 - RedisBus
+#### 增强对象操作之 - RedisBus
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)

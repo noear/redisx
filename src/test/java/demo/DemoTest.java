@@ -22,7 +22,7 @@ public class DemoTest {
 
     @Test
     public void test() {
-        //::redisX 基础接口使用
+        //::RedisX 基础接口使用
 
         client.open(session -> {
             session.key("order:1").expire(10).set("hello");
@@ -49,9 +49,9 @@ public class DemoTest {
 
     @Test
     public void test_bucket() throws Exception {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
-        //--- cache 使用
+        //--- bucket 使用
         RedisBucket bucket = client.getBucket();
         bucket.store("item:1", "hello", 2);
 
@@ -62,7 +62,7 @@ public class DemoTest {
         assert "hello".equals(bucket.get("item:1")) == false;
 
 
-        //--- cache 带序列化的使用
+        //--- bucket 带序列化的使用
         UserDo userDo = new UserDo();
         userDo.id = 1212;
         userDo.name = "noear";
@@ -85,10 +85,10 @@ public class DemoTest {
 
     @Test
     public void test_bucket2() throws Exception {
-        //--- cache 使用
+        //--- bucket 使用
         RedisBucket bucket = client.getBucket();
 
-        //--- cache 带序列化的使用
+        //--- bucket 带序列化的使用
         UserDo userDo = new UserDo();
         userDo.id = 1212;
         userDo.name = "noear";
@@ -114,7 +114,7 @@ public class DemoTest {
 
     @Test
     public void test_id() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
         //--- id 使用
         long user_id = 10000 + client.getId("id:user").generate();
@@ -126,7 +126,7 @@ public class DemoTest {
 
     @Test
     public void test_lock() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
         //--- lock 使用
         if (client.getLock("user:121212").tryLock()) {
@@ -140,7 +140,7 @@ public class DemoTest {
 
     @Test
     public void test_atomic() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
         //--- atomic 使用
         RedisAtomic atomic = client.getAtomic("user_count");
@@ -155,9 +155,9 @@ public class DemoTest {
 
     @Test
     public void test_list() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
-        //--- queue 使用
+        //--- list 使用
         RedisList list = client.getList("list:test");
         list.clear();
 
@@ -181,7 +181,7 @@ public class DemoTest {
 
     @Test
     public void test_queue() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
         //--- queue 使用
         RedisQueue queue = client.getQueue("queue:test");
@@ -207,7 +207,7 @@ public class DemoTest {
 
 //    @Test
     public void test_bus() {
-        //::redisX 增强接口使用
+        //::RedisX 增强接口使用
 
         //--- bus 使用
         RedisBus bus = client.getBus();

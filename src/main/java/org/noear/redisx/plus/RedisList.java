@@ -75,6 +75,13 @@ public class RedisList {
         return client.openAndGet(s -> s.key(listName).listGetAll());
     }
 
+
+    /**
+     * 设置项的值
+     * */
+    public void set(int index, String newValue) {
+        client.open(s -> s.key(listName).listSet(index, newValue));
+    }
     /**
      * 添加项
      */

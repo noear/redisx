@@ -459,6 +459,16 @@ public class RedisSession implements AutoCloseable {
     }
 
     /**
+     * 列表设置位置对应的项
+     * */
+    public RedisSession listSet(int index, String newValue) {
+        jedis.lset(_key, index, newValue);
+        expirePush();
+
+        return this;
+    }
+
+    /**
      * 列表删除项
      *
      * count > 0 : 从表头开始向表尾搜索，移除与 VALUE 相等的元素，数量为 COUNT 。

@@ -23,7 +23,7 @@ public class RedisQueue {
 
     /**
      * 添加
-     * */
+     */
     public void add(String item) {
         client.open(s -> s.key(queueName).persist().listAdd(item));
     }
@@ -31,7 +31,7 @@ public class RedisQueue {
 
     /**
      * 添加全部
-     * */
+     */
     public void addAll(Collection<String> items) {
         client.open(s -> {
             s.key(queueName).persist().listAddRange(items);
@@ -41,14 +41,14 @@ public class RedisQueue {
 
     /**
      * 推出
-     * */
+     */
     public String pop() {
         return client.openAndGet(s -> s.key(queueName).listPop());
     }
 
     /**
      * 推出更多
-     * */
+     */
     public void popAll(Consumer<String> consumer) {
         client.open(s -> {
             s.key(queueName);
@@ -66,16 +66,21 @@ public class RedisQueue {
 
     /**
      * 预览
-     * */
+     */
     public String peek() {
         return client.openAndGet(s -> s.key(queueName).listPeek());
     }
 
-
+    /**
+     * 大小
+     */
     public long size() {
         return client.openAndGet(s -> s.key(queueName).listLen());
     }
 
+    /**
+     * 清空
+     */
     public void clear() {
         client.open(s -> s.key(queueName).delete());
     }

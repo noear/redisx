@@ -17,7 +17,7 @@
 <dependency>
     <groupId>org.noear</groupId>
     <artifactId>redisx</artifactId>
-    <version>1.3.9</version>
+    <version>1.3.10</version>
 </dependency>
 ```
 

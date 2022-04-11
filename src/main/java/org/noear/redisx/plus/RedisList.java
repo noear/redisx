@@ -3,7 +3,6 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,7 +11,7 @@ import java.util.List;
  * @author noear
  * @since 1.3
  */
-public class RedisList implements Iterable<String> {
+public class RedisList {
     private final RedisClient client;
     private final String listName;
 
@@ -85,11 +84,6 @@ public class RedisList implements Iterable<String> {
     public boolean addAll(Collection<? extends String> elements) {
         client.open(s -> s.key(listName).listAddRange(elements));
         return true;
-    }
-
-    @Override
-    public Iterator<String> iterator() {
-        return getAll().iterator();
     }
 
     /**

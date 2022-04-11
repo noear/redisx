@@ -20,6 +20,7 @@ public class RedisQueue {
         this.queueName = queueName;
     }
 
+
     /**
      * 添加
      * */
@@ -68,5 +69,14 @@ public class RedisQueue {
      * */
     public String peek() {
         return client.openAndGet(s -> s.key(queueName).listPeek());
+    }
+
+
+    public long size() {
+        return client.openAndGet(s -> s.key(queueName).listLen());
+    }
+
+    public void clear() {
+        client.open(s -> s.key(queueName).delete());
     }
 }

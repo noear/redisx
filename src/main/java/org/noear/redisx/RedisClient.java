@@ -201,6 +201,13 @@ import java.util.function.Function;
     }
 
     /**
+     * 获取一个列表
+     */
+    public RedisList getList(String listName) {
+        return new RedisList(this, listName);
+    }
+
+    /**
      * 获取一个Id生成器
      */
     public RedisId getId(String idName) {

@@ -479,10 +479,22 @@ public class RedisSession implements AutoCloseable {
         return listDel(item, 0);
     }
 
+    public RedisSession listDelRange(Collection<? extends String> items) {
+        Pipeline pip = jedis.pipelined();
+        for (String item : items) {
+            pip.lrem(_key, 0, item); //左侧压进
+        }
+        pip.sync();
+
+        expirePush();
+
+        return this;
+    }
+
     /**
      * 列表批量添加项
      * */
-    public RedisSession listAddRange(Collection<String> items) {
+    public RedisSession listAddRange(Collection<? extends String> items) {
         Pipeline pip = jedis.pipelined();
         for (String item : items) {
             pip.lpush(_key, item); //左侧压进
@@ -520,6 +532,10 @@ public class RedisSession implements AutoCloseable {
      */
     public List<String> listGetRange(int start, int end) {
         return jedis.lrange(_key, start, end);
+    }
+
+    public List<String> listGetAll() {
+        return jedis.lrange(_key, 0, -1);
     }
 
     /**

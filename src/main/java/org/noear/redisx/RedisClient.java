@@ -4,7 +4,9 @@ import org.noear.redisx.plus.*;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -14,11 +16,15 @@ import java.util.function.Function;
  * @author noear
  * @since 1.0
  */
- public class RedisClient {
+public class RedisClient {
     /**
      * 连接池
      */
     private JedisPool jedisPool;
+    /**
+     * 集群连接池
+     */
+    private JedisCluster jedisCluster;
 
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");
@@ -98,20 +104,35 @@ import java.util.function.Function;
         config.setTestOnBorrow(false);
         config.setTestOnReturn(false);
 
-        String[] ss = server.split(":");
-
-        if ("".equals(password)) {
-            password = null;
-        }
-
-        if (TextUtil.isEmpty(user)) {
-            jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, password, db);
+        // 判断是否为 Redis 集群
+        String separator = ",";
+        if (server.contains(separator)) {
+            Set<HostAndPort> nodes = new HashSet<>();
+            for (String fqdn : server.split(separator)) {
+                String[] info = fqdn.split(":");
+                nodes.add(new HostAndPort(info[0], Integer.parseInt(info[1])));
+            }
+            if (TextUtil.isEmpty(user)) {
+                this.jedisCluster = new JedisCluster(nodes, 3000, 3000, 64, password, config);
+            } else {
+                this.jedisCluster = new JedisCluster(nodes, 3000, 3000, 64, user, password, null, config);
+            }
         } else {
-            jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, user, password, db);
+            String[] ss = server.split(":");
+
+            if ("".equals(password)) {
+                password = null;
+            }
+
+            if (TextUtil.isEmpty(user)) {
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, password, db);
+            } else {
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, user, password, db);
+            }
         }
     }
 
-    //兼容旧的faas
+    // 兼容旧的faas
     @Deprecated
     public void open0(Consumer<RedisSession> using) {
         open(using);
@@ -151,8 +172,12 @@ import java.util.function.Function;
      * 打开会话（需要自己关闭）
      */
     public RedisSession openSession() {
-        Jedis jx = jedisPool.getResource();
-        return new RedisSession(jx);
+        if(this.jedisPool != null) {
+            Jedis jx = jedisPool.getResource();
+            return new RedisSingleSession(jx);
+        } else {
+            return new RedisClusterSession(this.jedisCluster);
+        }
     }
 
     ////////////////////

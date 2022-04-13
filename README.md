@@ -66,9 +66,7 @@ public class DemoTest {
         });
 
         client.open(session -> {
-            session.key("user_link:1").expire(10)
-                    .listAdd("test1")
-                    .listAdd("test2");
+            session.key("user_link:1").delay(10);
         });
 
         assert true;

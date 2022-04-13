@@ -52,19 +52,23 @@ public class DemoTest {
 
     @Test
     public void test() {
+        //写操作:: key().expire().xxx()
         client.open(session -> {
             session.key("order:1").expire(10).set("hello");
         });
 
+        //读操作:: key().xxx();
         String tmp = client.openAndGet(session -> session.key("order:1").get());
         assert tmp != null;
 
+        //写操作:: key().expire().xxx()
         client.open(session -> {
             session.key("user:1").expire(10)
                     .hashSet("name", "noear")
                     .hashSet("sex", "1");
         });
 
+        //延时操作:: key().delay()
         client.open(session -> {
             session.key("user_link:1").delay(10);
         });

@@ -56,8 +56,8 @@ public class DemoTest {
             session.key("order:1").expire(10).set("hello");
         });
 
-        String item_1 = client.openAndGet(session -> session.key("order:1").get());
-        assert item_1 != null;
+        String tmp = client.openAndGet(session -> session.key("order:1").get());
+        assert tmp != null;
 
         client.open(session -> {
             session.key("user:1").expire(10)

@@ -129,7 +129,9 @@ import java.util.function.Function;
     public void open(Consumer<RedisSession> using) {
         try (RedisSession session = openSession()) {
             using.accept(session);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
@@ -140,7 +142,9 @@ import java.util.function.Function;
     public <T> T openAndGet(Function<RedisSession, T> using) {
         try (RedisSession session = openSession()) {
             return using.apply(session);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }

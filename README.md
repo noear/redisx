@@ -140,7 +140,7 @@ public class DemoTest {
 ```
 
 
-### RedisHash - 哈希表
+### RedisHash - 哈希表(兼容标准Map接口)
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)

@@ -22,8 +22,8 @@ public class SerializationUtil {
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(object);
                 oos.flush();
-            } catch (IOException var3) {
-                throw new IllegalArgumentException("Failed to serialize object of type: " + object.getClass(), var3);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Failed to serialize object of type: " + object.getClass(), e);
             }
 
             return baos.toByteArray();
@@ -40,10 +40,10 @@ public class SerializationUtil {
             try {
                 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
                 return ois.readObject();
-            } catch (IOException var2) {
-                throw new IllegalArgumentException("Failed to deserialize object", var2);
-            } catch (ClassNotFoundException var3) {
-                throw new IllegalStateException("Failed to deserialize object type", var3);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Failed to deserialize object", e);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException("Failed to deserialize object type", e);
             }
         }
     }

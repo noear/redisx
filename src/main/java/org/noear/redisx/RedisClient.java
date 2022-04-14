@@ -57,29 +57,29 @@ public class RedisClient {
         String server = prop.getProperty("server");
         String user = prop.getProperty("user");
         String password = prop.getProperty("password");
-        String maxWaitMillis = prop.getProperty("maxWaitMillis");
+        String maxWaitMillisStr = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
 
-        if (maxTotal > 0) {
-            initDo(server,
-                    user,
-                    password,
-                    db,
-                    maxTotal,
-                    (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
-            );
-        } else {
-            initDo(server,
-                    user,
-                    password,
-                    db,
-                    (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr)),
-                    (TextUtil.isEmpty(maxWaitMillis) ? 0L : Long.parseLong(maxWaitMillis))
-            );
+        long maxWaitMillis = (TextUtil.isEmpty(maxWaitMillisStr) ? 0L : Long.parseLong(maxWaitMillisStr));
+
+        if (maxTotal == 0) {
+            maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
         }
+
+        initDo(server, user, password, db, maxTotal, maxWaitMillis);
     }
 
     private void initDo(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
+        try {
+            initDo0(server, user, password, db, maxTotal, maxWaitMillis);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private void initDo0(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
         JedisPoolConfig config = new JedisPoolConfig();
 
         if (db < 0) {

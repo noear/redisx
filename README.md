@@ -78,7 +78,9 @@ public class DemoTest {
 
 ## 领域增强对象接口
 
-### RedisBucket
+领域增强对象，是由基础会话接口封装而成
+
+### RedisBucket - 存储桶
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -137,7 +139,33 @@ public class DemoTest {
 }
 ```
 
-### RedisId
+
+### RedisHash - 哈希表
+
+```java
+@RunWith(SolonJUnit4ClassRunner.class)
+@SolonTest(DemoApp.class)
+public class DemoTest {
+    @Inject
+    RedisClient client;
+
+    @Test
+    public void test_hash() {
+        //--- hash 使用
+        RedisHash redisHash = client.getHash("user:121");
+
+        redisHash.put("id", 1);
+        redisHash.put("name", "demo");
+
+        assert redisHash.getAsInt("id") == 1;
+
+        assert redisHash.size() == 2;
+    }
+}
+```
+
+
+### RedisId - Id生成器
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -161,7 +189,7 @@ public class DemoTest {
 ```
 
 
-### RedisLock
+### RedisLock - 分布式锁
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -185,7 +213,7 @@ public class DemoTest {
 ```
 
 
-### RedisAtomic
+### RedisAtomic - 原子数字
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -209,7 +237,7 @@ public class DemoTest {
 }
 ```
 
-### RedisList
+### RedisList - 列表
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -249,7 +277,7 @@ public class DemoTest {
 
 
 
-### RedisQueue
+### RedisQueue - 队列
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -285,7 +313,7 @@ public class DemoTest {
 ```
 
 
-### RedisBus
+### RedisBus - 总线
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)

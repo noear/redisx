@@ -96,6 +96,19 @@ public class DemoTest {
     }
 
     @Test
+    public void test_hash() {
+        //--- hash 使用
+        RedisHash redisHash = client.getHash("user:121");
+
+        redisHash.put("id", 1);
+        redisHash.put("name", "demo");
+
+        assert redisHash.getAsInt("id") == 1;
+
+        assert redisHash.size() == 2;
+    }
+
+    @Test
     public void test_id() {
         //--- id 使用
         RedisId redisId = client.getId("id:user");

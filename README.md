@@ -11,7 +11,7 @@
 
 ## 快速入门
 
-## 1.配置
+### 1.配置
 
 ```xml
 <dependency>
@@ -28,7 +28,7 @@ test.rd1:
   db: 1
 ```
 
-## 2.bean 构建（以下代码以solon演示）
+### 2.bean 构建（以下代码以solon演示）
 ```java
 @Configuration
 public class Config {
@@ -39,9 +39,7 @@ public class Config {
 }
 ```
 
-## 3.使用
-
-### 基本会话接口操作
+### 3.基础会话接口操作
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -78,7 +76,9 @@ public class DemoTest {
 }
 ```
 
-### 增强对象 - RedisBucket
+## 领域增强对象接口
+
+### RedisBucket
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -137,7 +137,7 @@ public class DemoTest {
 }
 ```
 
-### 增强对象 - RedisId
+### RedisId
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -161,7 +161,7 @@ public class DemoTest {
 ```
 
 
-### 增强对象 - RedisLock
+### RedisLock
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -185,7 +185,7 @@ public class DemoTest {
 ```
 
 
-### 增强对象 - RedisAtomic
+### RedisAtomic
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -209,7 +209,7 @@ public class DemoTest {
 }
 ```
 
-### 增强对象 - RedisList
+### RedisList
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -249,7 +249,7 @@ public class DemoTest {
 
 
 
-### 增强对象 - RedisQueue
+### RedisQueue
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)
@@ -285,7 +285,7 @@ public class DemoTest {
 ```
 
 
-### 增强对象 - RedisBus
+### RedisBus
 
 ```java
 @RunWith(SolonJUnit4ClassRunner.class)

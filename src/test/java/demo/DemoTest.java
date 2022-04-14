@@ -51,13 +51,18 @@ public class DemoTest {
         //--- bucket 使用
         RedisBucket bucket = client.getBucket();
 
+        //存储
         bucket.store("item:1", "hello", 2);
 
+        //获取
         assert "hello".equals(bucket.get("item:1"));
 
         Thread.sleep(3 * 1000);
 
         assert "hello".equals(bucket.get("item:1")) == false;
+
+        //延时
+        bucket.delay("item:1", 2);
     }
 
     @Test

@@ -1,8 +1,11 @@
 package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
+import org.noear.redisx.utils.AssertUtil;
+import org.noear.redisx.utils.SerializationUtil;
 import org.noear.redisx.utils.TextUtil;
 
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +49,20 @@ public class RedisHash implements Map<String,String> {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * 获取并反序列化
+     */
+    public <T> T getAndDeserialize(String field) {
+        String val = client.openAndGet(s -> s.key(hashName).hashGet(field));
+
+        if (val == null) {
+            return null;
+        } else {
+            byte[] bytes = Base64.getDecoder().decode(val);
+            return (T) SerializationUtil.deserialize(bytes);
+        }
+    }
+
     @Override
     public String get(Object field) {
         return client.openAndGet(s -> s.key(hashName).hashGet(field.toString()));
@@ -71,6 +88,15 @@ public class RedisHash implements Map<String,String> {
         return TextUtil.isEmpty(tmp) ? 0 : Double.parseDouble(tmp);
     }
 
+
+    public void putAndSerialize(String field, Object obj) {
+        AssertUtil.notNull(obj, "redis hash value cannot be null");
+
+        byte[] bytes = SerializationUtil.serialize(obj);
+        String value = Base64.getEncoder().encodeToString(bytes);
+
+        client.open(s -> s.key(hashName).expire(inSeconds).hashSet(field, value));
+    }
 
     @Override
     public String put(String field, String value) {

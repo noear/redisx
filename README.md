@@ -157,9 +157,18 @@ public class DemoTest {
         redisHash.put("id", 1);
         redisHash.put("name", "demo");
 
+        OrderDo orderDo = new OrderDo();
+        orderDo.id = 10001;
+        orderDo.traceId = "demo";
+        orderDo.note = "test demo";
+        redisHash.putAndSerialize("order", orderDo);
+
         assert redisHash.getAsInt("id") == 1;
 
-        assert redisHash.size() == 2;
+        OrderDo orderDo1 = redisHash.getAndDeserialize("order");
+        assert orderDo1.id == orderDo.id;
+
+        assert redisHash.size() == 3;
     }
 }
 ```

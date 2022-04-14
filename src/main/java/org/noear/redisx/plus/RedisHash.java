@@ -14,10 +14,16 @@ import java.util.Set;
 public class RedisHash implements Map<String,String> {
     private final RedisClient client;
     private final String hashName;
+    private final int inSeconds;//永久:-1
 
     public RedisHash(RedisClient client, String hashName) {
+        this(client, hashName, -1);
+    }
+
+    public RedisHash(RedisClient client, String hashName, int inSeconds) {
         this.client = client;
         this.hashName = hashName;
+        this.inSeconds = inSeconds;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class RedisHash implements Map<String,String> {
 
     @Override
     public String put(String field, String value) {
-        client.open(s -> s.key(hashName).persist().hashSet(field, value));
+        client.open(s -> s.key(hashName).expire(inSeconds).hashSet(field, value));
 
         return value;
     }
@@ -125,5 +131,12 @@ public class RedisHash implements Map<String,String> {
     @Override
     public Set<Entry<String, String>> entrySet() {
         return client.openAndGet(s -> s.key(hashName).hashGetAll()).entrySet();
+    }
+
+    /**
+     * 延时
+     * */
+    public void delay(int seconds) {
+        client.open(s -> s.key(hashName).delay(seconds));
     }
 }

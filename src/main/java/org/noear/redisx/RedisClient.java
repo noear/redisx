@@ -184,10 +184,17 @@ import java.util.function.Function;
     }
 
     /**
-     * 获取一个哈希
+     * 获取一个哈希（永久存在）
      */
     public RedisHash getHash(String hashName) {
         return new RedisHash(this, hashName);
+    }
+
+    /**
+     * 获取一个哈希（时效性）
+     */
+    public RedisHash getHash(String hashName, int inSeconds) {
+        return new RedisHash(this, hashName, inSeconds);
     }
 
     /**

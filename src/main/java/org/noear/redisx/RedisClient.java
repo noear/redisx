@@ -17,6 +17,7 @@ import java.util.function.Function;
  * @since 1.0
  */
 public class RedisClient {
+
     /**
      * 连接池
      */
@@ -104,18 +105,25 @@ public class RedisClient {
         config.setTestOnBorrow(false);
         config.setTestOnReturn(false);
 
+
+        final int client_timeout = 3000;
+        final int client_maxAttempts = 64;
+        final String server_separator = ",";
+
         // 判断是否为 Redis 集群
-        String separator = ",";
-        if (server.contains(separator)) {
+        if (server.contains(server_separator)) {
             Set<HostAndPort> nodes = new HashSet<>();
-            for (String fqdn : server.split(separator)) {
-                String[] info = fqdn.split(":");
-                nodes.add(new HostAndPort(info[0], Integer.parseInt(info[1])));
+            for (String fqdn : server.split(server_separator)) {
+                if (TextUtil.isEmpty(fqdn) == false) {
+                    String[] info = fqdn.split(":");
+                    nodes.add(new HostAndPort(info[0], Integer.parseInt(info[1])));
+                }
             }
+
             if (TextUtil.isEmpty(user)) {
-                this.jedisCluster = new JedisCluster(nodes, 3000, 3000, 64, password, config);
+                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, client_maxAttempts, password, config);
             } else {
-                this.jedisCluster = new JedisCluster(nodes, 3000, 3000, 64, user, password, null, config);
+                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, client_maxAttempts, user, password, null, config);
             }
         } else {
             String[] ss = server.split(":");
@@ -125,14 +133,13 @@ public class RedisClient {
             }
 
             if (TextUtil.isEmpty(user)) {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, password, db);
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), client_timeout, password, db);
             } else {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), 3000, user, password, db);
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), client_timeout, user, password, db);
             }
         }
     }
 
-    // 兼容旧的faas
     @Deprecated
     public void open0(Consumer<RedisSession> using) {
         open(using);

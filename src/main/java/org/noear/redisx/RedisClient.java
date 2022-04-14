@@ -73,8 +73,10 @@ public class RedisClient {
         try {
             initDo0(server, user, password, db, maxTotal, maxWaitMillis);
         } catch (RuntimeException e) {
+            //调试时方便断点
             throw e;
         } catch (Throwable e) {
+            //调试时方便断点
             throw new IllegalArgumentException(e);
         }
     }

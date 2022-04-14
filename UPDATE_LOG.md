@@ -1,3 +1,7 @@
+### 1.3.11
+* 增加 RedisClient::getHash(String hashName, int inSeconds) 接口
+* 增加 RedisHahs::delay(int seconds) 接口
+
 ### 1.3.10
 * 增加 RedisList 增强模型
 

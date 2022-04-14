@@ -52,7 +52,7 @@ public class RedisClusterSession implements RedisSession {
         }
 
         String[] keyAry = new String[keys.size()];
-        return cluster.del(keys.toArray(keyAry));
+        return cluster.getClusterNodes().get(0).getResource().del(keys.toArray(keyAry));
     }
 
     @Override

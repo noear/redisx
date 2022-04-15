@@ -33,7 +33,7 @@ test.rd1:
 
 ```yaml
 server: localhost:6379
-db: 1
+db: 1 #cluster 时无效
 password: 123456
 user: user #redis 6.x 新加
 maxTotal: 200

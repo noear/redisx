@@ -1,3 +1,12 @@
+### 1.4.1
+* 增加集群模式支持
+
+```yaml
+test.rd1:
+  server: "localhost:6379,localhost:6380,localhost:6381"
+  password: 123456
+```
+
 ### 1.3.11
 * 增加 RedisClient::getHash(String hashName, int inSeconds) 接口
 * 增加 RedisHahs::delay(int seconds) 接口

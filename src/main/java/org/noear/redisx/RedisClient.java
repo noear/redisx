@@ -52,12 +52,16 @@ public class RedisClient {
         String maxWaitMillisStr = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
         String maxIdleStr = prop.getProperty("maxIdle");
+        String connectionTimeoutStr = prop.getProperty("connectionTimeout");
+        String soTimeoutStr = prop.getProperty("soTimeout");
 
         String maxAttemptsStr = prop.getProperty("maxAttempts");
 
         long maxWaitMillis = (TextUtil.isEmpty(maxWaitMillisStr) ? 0L : Long.parseLong(maxWaitMillisStr));
         int maxAttempts = (TextUtil.isEmpty(maxAttemptsStr) ? 0 : Integer.parseInt(maxAttemptsStr));
-        int maxIdle =(TextUtil.isEmpty(maxIdleStr) ? 0 : Integer.parseInt(maxIdleStr));
+        int maxIdle = (TextUtil.isEmpty(maxIdleStr) ? 0 : Integer.parseInt(maxIdleStr));
+        int connectionTimeout = (TextUtil.isEmpty(connectionTimeoutStr) ? 0 : Integer.parseInt(connectionTimeoutStr));
+        int soTimeout = (TextUtil.isEmpty(soTimeoutStr) ? 0 : Integer.parseInt(soTimeoutStr));
 
         if (maxTotal == 0) {
             maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
@@ -92,6 +96,14 @@ public class RedisClient {
             maxAttempts = 5;
         }
 
+        if(connectionTimeout == 0){
+            connectionTimeout = 3000;
+        }
+
+        if(soTimeout == 0){
+            soTimeout = connectionTimeout;
+        }
+
         config.setMaxTotal(maxTotal);
         config.setMaxIdle(maxIdle);
         config.setMinIdle(minIdle);
@@ -100,13 +112,10 @@ public class RedisClient {
         config.setTestOnReturn(false);
 
 
-        final int client_timeout = 3000;
-        final String server_separator = ",";
-
         // 判断是否为 Redis 集群
-        if (server.contains(server_separator)) {
+        if (server.contains(",")) {
             Set<HostAndPort> nodes = new HashSet<>();
-            for (String fqdn : server.split(server_separator)) {
+            for (String fqdn : server.split(",")) {
                 if (TextUtil.isEmpty(fqdn) == false) {
                     String[] info = fqdn.split(":");
                     nodes.add(new HostAndPort(info[0], Integer.parseInt(info[1])));
@@ -114,9 +123,9 @@ public class RedisClient {
             }
 
             if (TextUtil.isEmpty(user)) {
-                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, maxAttempts, password, config);
+                this.jedisCluster = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, password, config);
             } else {
-                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, maxAttempts, user, password, null, config);
+                this.jedisCluster = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, user, password, null, config);
             }
         } else {
             String[] ss = server.split(":");
@@ -126,9 +135,9 @@ public class RedisClient {
             }
 
             if (TextUtil.isEmpty(user)) {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), client_timeout, password, db);
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), connectionTimeout, password, db);
             } else {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), client_timeout, user, password, db);
+                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), connectionTimeout, user, password, db);
             }
         }
     }

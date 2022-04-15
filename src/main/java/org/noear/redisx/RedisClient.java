@@ -98,9 +98,9 @@ public class RedisClient {
             maxTotal = 200;
         }
 
-        int maxIdle = maxTotal / 100;
-        if (maxIdle < 5) {
-            maxIdle = 5;
+        int minIdle = maxTotal / 100;
+        if (minIdle < 5) {
+            minIdle = 5;
         }
 
         if (maxWaitMillis < 3000) {
@@ -112,7 +112,8 @@ public class RedisClient {
         }
 
         config.setMaxTotal(maxTotal);
-        config.setMaxIdle(maxIdle);
+        config.setMaxIdle(maxTotal);
+        config.setMinIdle(minIdle);
         config.setMaxWaitMillis(maxWaitMillis);
         config.setTestOnBorrow(false);
         config.setTestOnReturn(false);

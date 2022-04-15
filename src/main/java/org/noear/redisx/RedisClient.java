@@ -45,52 +45,25 @@ public class RedisClient {
         initDo(prop, db, maxTotal);
     }
 
-    @Deprecated
-    public RedisClient(String server, String user, String password, int db, int maxTotal) {
-        initDo(server, user, password, db, maxTotal, 0L, 0);
-    }
-
-    @Deprecated
-    public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
-        initDo(server, user, password, db, maxTotal, maxWaitMillis, 0);
-    }
-
-    @Deprecated
-    public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
-        initDo(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
-    }
-
     private void initDo(Properties prop, int db, int maxTotal) {
         String server = prop.getProperty("server");
         String user = prop.getProperty("user");
         String password = prop.getProperty("password");
         String maxWaitMillisStr = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
+        String maxIdleStr = prop.getProperty("maxIdle");
+
         String maxAttemptsStr = prop.getProperty("maxAttempts");
 
         long maxWaitMillis = (TextUtil.isEmpty(maxWaitMillisStr) ? 0L : Long.parseLong(maxWaitMillisStr));
         int maxAttempts = (TextUtil.isEmpty(maxAttemptsStr) ? 0 : Integer.parseInt(maxAttemptsStr));
+        int maxIdle =(TextUtil.isEmpty(maxIdleStr) ? 0 : Integer.parseInt(maxIdleStr));
 
         if (maxTotal == 0) {
             maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
         }
 
-        initDo(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
-    }
-
-    private void initDo(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
-        try {
-            initDo0(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
-        } catch (RuntimeException e) {
-            //调试时方便断点
-            throw e;
-        } catch (Throwable e) {
-            //调试时方便断点
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private void initDo0(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
+        //开始初始化
         JedisPoolConfig config = new JedisPoolConfig();
 
         if (db < 0) {
@@ -100,6 +73,11 @@ public class RedisClient {
         if (maxTotal < 20) {
             maxTotal = 200;
         }
+
+        if(maxIdle == 0){
+            maxIdle = maxTotal;
+        }
+
 
         int minIdle = maxTotal / 100;
         if (minIdle < 5) {
@@ -115,7 +93,7 @@ public class RedisClient {
         }
 
         config.setMaxTotal(maxTotal);
-        config.setMaxIdle(maxTotal);
+        config.setMaxIdle(maxIdle);
         config.setMinIdle(minIdle);
         config.setMaxWaitMillis(maxWaitMillis);
         config.setTestOnBorrow(false);

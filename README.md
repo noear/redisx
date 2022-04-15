@@ -32,17 +32,18 @@ test.rd1:
 可配置属性参考:
 
 
-|  属性  |  示例  | 说明                                             |
-| -------- | -------- |------------------------------------------------|
-| server     | "localhost:6379"     | 地址，"localhost:6379,localhost:6380" -cluster 模式 |
-| db     | 1     | 库号，cluster 时无效                                 |
-| password     | "123456"     | 密码                                             |
-| user     | "user"     | 账号，redis 6.x 新加                                |
-| maxTotal     | 200     |                                                |
-| maxIdle     | 200     |                                                |
-| maxAttempts     | 5     | 最大重试，cluster 时有效                               |
-| connectionTimeout     | 3000     | 连接超时                                           |
-| soTimeout     | 3000     | cluster 时有效                                    |
+|  属性  |  示例  | 说明                                       |
+| -------- | -------- |------------------------------------------|
+| server     | "localhost:6379"     | 地址，"localhost:6379,localhost:6380" -集群模式 |
+| db     | 1     | 库号，集群模式无效                           |
+| password     | "123456"     | 密码                                       |
+| user     | "user"     | 账号，redis 6.x 新加                          |
+| maxTotal     | 200     |  最大连接数                                        |
+| maxIdle     | 200     |  最大空闲数                                        |
+| maxWaitMillis     | 3000     |  最大建立连接等待时间                                        |
+| maxAttempts     | 5     | 最大重试，集群模式有效                         |
+| connectionTimeout     | 3000     | 连接超时                                     |
+| soTimeout     | 3000     | 集群模式有效                                  |
 
 
 

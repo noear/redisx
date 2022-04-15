@@ -28,6 +28,21 @@ test.rd1:
   db: 1
 ```
 
+
+参考属性表:
+
+```yaml
+server: localhost:6379
+db: 1
+password: 123456
+user: user
+maxTotal: 200
+maxIdle: 200
+connectionTimeout: 3000
+soTimeout: 3000
+maxAttempts: 5
+```
+
 ### 2.bean 构建（以下代码以solon演示）
 ```java
 @Configuration

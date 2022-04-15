@@ -45,14 +45,17 @@ public class RedisClient {
         initDo(prop, db, maxTotal);
     }
 
+    @Deprecated
     public RedisClient(String server, String user, String password, int db, int maxTotal) {
         initDo(server, user, password, db, maxTotal, 0L, 0);
     }
 
+    @Deprecated
     public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
         initDo(server, user, password, db, maxTotal, maxWaitMillis, 0);
     }
 
+    @Deprecated
     public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
         initDo(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
     }

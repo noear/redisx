@@ -24,8 +24,8 @@
 ```yaml
 test.rd1:
   server: localhost:6379
-  password: 123456
   db: 1
+  password: 123456
 ```
 
 
@@ -35,12 +35,12 @@ test.rd1:
 server: localhost:6379
 db: 1
 password: 123456
-user: user
+user: user #redis 6.x 新加
 maxTotal: 200
 maxIdle: 200
 connectionTimeout: 3000
-soTimeout: 3000
-maxAttempts: 5
+soTimeout: 3000 #cluster 时有效
+maxAttempts: 5  #cluster 时有效
 ```
 
 ### 2.bean 构建（以下代码以solon演示）

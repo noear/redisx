@@ -17,7 +17,6 @@ import java.util.function.Function;
  * @since 1.0
  */
 public class RedisClient {
-
     /**
      * 连接池
      */

@@ -46,11 +46,15 @@ public class RedisClient {
     }
 
     public RedisClient(String server, String user, String password, int db, int maxTotal) {
-        initDo(server, user, password, db, maxTotal, 0L);
+        initDo(server, user, password, db, maxTotal, 0L, 0);
     }
 
     public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
-        initDo(server, user, password, db, maxTotal, maxWaitMillis);
+        initDo(server, user, password, db, maxTotal, maxWaitMillis, 0);
+    }
+
+    public RedisClient(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
+        initDo(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
     }
 
     private void initDo(Properties prop, int db, int maxTotal) {
@@ -59,19 +63,21 @@ public class RedisClient {
         String password = prop.getProperty("password");
         String maxWaitMillisStr = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
+        String maxAttemptsStr = prop.getProperty("maxAttempts");
 
         long maxWaitMillis = (TextUtil.isEmpty(maxWaitMillisStr) ? 0L : Long.parseLong(maxWaitMillisStr));
+        int maxAttempts = (TextUtil.isEmpty(maxAttemptsStr) ? 0 : Integer.parseInt(maxAttemptsStr));
 
         if (maxTotal == 0) {
             maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
         }
 
-        initDo(server, user, password, db, maxTotal, maxWaitMillis);
+        initDo(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
     }
 
-    private void initDo(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
+    private void initDo(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
         try {
-            initDo0(server, user, password, db, maxTotal, maxWaitMillis);
+            initDo0(server, user, password, db, maxTotal, maxWaitMillis, maxAttempts);
         } catch (RuntimeException e) {
             //调试时方便断点
             throw e;
@@ -81,7 +87,7 @@ public class RedisClient {
         }
     }
 
-    private void initDo0(String server, String user, String password, int db, int maxTotal, long maxWaitMillis) {
+    private void initDo0(String server, String user, String password, int db, int maxTotal, long maxWaitMillis, int maxAttempts) {
         JedisPoolConfig config = new JedisPoolConfig();
 
         if (db < 0) {
@@ -101,6 +107,10 @@ public class RedisClient {
             maxWaitMillis = 3000;
         }
 
+        if(maxAttempts == 0){
+            maxAttempts = 5;
+        }
+
         config.setMaxTotal(maxTotal);
         config.setMaxIdle(maxIdle);
         config.setMaxWaitMillis(maxWaitMillis);
@@ -109,7 +119,6 @@ public class RedisClient {
 
 
         final int client_timeout = 3000;
-        final int client_maxAttempts = 64;
         final String server_separator = ",";
 
         // 判断是否为 Redis 集群
@@ -123,9 +132,9 @@ public class RedisClient {
             }
 
             if (TextUtil.isEmpty(user)) {
-                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, client_maxAttempts, password, config);
+                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, maxAttempts, password, config);
             } else {
-                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, client_maxAttempts, user, password, null, config);
+                this.jedisCluster = new JedisCluster(nodes, client_timeout, client_timeout, maxAttempts, user, password, null, config);
             }
         } else {
             String[] ss = server.split(":");

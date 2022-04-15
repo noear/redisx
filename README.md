@@ -32,7 +32,7 @@ test.rd1:
 可配置属性参考:
 
 ```yaml
-server: localhost:6379
+server: "localhost:6379" #"localhost:6379,localhost:6380,localhost:6381" -cluster 模式
 db: 1 #cluster 时无效
 password: 123456
 user: user #redis 6.x 新加

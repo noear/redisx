@@ -29,7 +29,7 @@ test.rd1:
 ```
 
 
-参考属性表:
+可配置属性参考:
 
 ```yaml
 server: localhost:6379

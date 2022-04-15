@@ -31,10 +31,10 @@ public class RedisClient {
         String db = prop.getProperty("db");
 
         if (TextUtil.isEmpty(db)) {
-            throw new RuntimeException("RedisClient: Properties lacks the db parameter!");
+            initDo(prop, 0, 0);
+        } else {
+            initDo(prop, Integer.parseInt(db), 0);
         }
-
-        initDo(prop, Integer.parseInt(db), 0);
     }
 
     public RedisClient(Properties prop, int db) {

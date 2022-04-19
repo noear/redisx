@@ -4,6 +4,7 @@ import org.noear.redisx.plus.*;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -103,13 +104,14 @@ public class RedisClient implements AutoCloseable {
         poolConfig.setMaxTotal(maxTotal);
         poolConfig.setMaxIdle(maxIdle);
         poolConfig.setMinIdle(minIdle);
-        poolConfig.setMaxWaitMillis(maxWaitMillis);
+        poolConfig.setMaxWait(Duration.ofMillis(maxWaitMillis));
         poolConfig.setTestOnBorrow(false);
         poolConfig.setTestOnReturn(false);
 
         //3.构建客户端配置
         DefaultJedisClientConfig.Builder clientConfigBuilder = DefaultJedisClientConfig.builder();
         clientConfigBuilder.connectionTimeoutMillis(connectionTimeout);
+        clientConfigBuilder.socketTimeoutMillis(soTimeout);
 
         if (TextUtil.isEmpty(password) == false) {
             clientConfigBuilder.password(password);

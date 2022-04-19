@@ -124,14 +124,14 @@ public class RedisClient implements AutoCloseable {
 
         //4.构建客户端
         if (server.contains(",")) {
-            Set<HostAndPort> nodes = new HashSet<>();
+            Set<HostAndPort> clusterNodes = new HashSet<>();
             for (String fqdn : server.split(",")) {
                 if (TextUtil.isEmpty(fqdn) == false) {
-                    nodes.add(parseAddr(fqdn));
+                    clusterNodes.add(parseAddr(fqdn));
                 }
             }
 
-            this.unifiedJedis = new JedisCluster(nodes, clientConfig, maxAttempts, poolConfig);
+            this.unifiedJedis = new JedisCluster(clusterNodes, clientConfig, maxAttempts, poolConfig);
         } else {
             HostAndPort hostAndPort = parseAddr(server);
             this.unifiedJedis = new JedisPooled(poolConfig, hostAndPort, clientConfig);

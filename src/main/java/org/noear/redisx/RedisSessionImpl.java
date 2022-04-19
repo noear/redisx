@@ -4,11 +4,16 @@ import org.noear.redisx.model.LocalHash;
 import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
+import redis.clients.jedis.args.GeoUnit;
+import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.params.SetParams;
+import redis.clients.jedis.resps.GeoRadiusResponse;
+import redis.clients.jedis.resps.Tuple;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Redis 会话
@@ -16,35 +21,45 @@ import java.util.stream.Collectors;
  * @author noear
  * @since 1.0
  */
-public class RedisClusterSession implements RedisSession {
+public class RedisSessionImpl implements RedisSession {
+
     private static final String LOCK_SUCCEED = "OK";
 
-    private final JedisCluster cluster;
+    private final UnifiedJedis jedis;
 
-    protected RedisClusterSession(JedisCluster jedis) {
-        this.cluster = jedis;
+    protected RedisSessionImpl(UnifiedJedis jedis) {
+        this.jedis = jedis;
     }
 
-    private boolean _close = false;
+    //private boolean _close = false;
 
+    /**
+     * 关闭会话
+     */
     @Override
     public void close() throws Exception {
-        if (_close) {
-            return;
-        }
-
-        cluster.close();
-        _close = true;
+//        if (_close) {
+//            return;
+//        }
+//
+//        jedis.close(); //不再需要关闭了
+//        _close = true;
     }
 
     private String _key;
     private long _seconds;
 
+    /**
+     * 获取jedis原始对象
+     */
     @Override
-    public Jedis jedis() {
-        return null;
+    public UnifiedJedis jedis() {
+        return jedis;
     }
 
+    /**
+     * 删除一批主键
+     */
     @Override
     public Long deleteKeys(Collection<String> keys) {
         if (keys == null || keys.isEmpty()) {
@@ -52,9 +67,12 @@ public class RedisClusterSession implements RedisSession {
         }
 
         String[] keyAry = new String[keys.size()];
-        return cluster.getClusterNodes().get(0).getResource().del(keys.toArray(keyAry));
+        return jedis.del(keys.toArray(keyAry));
     }
 
+    /**
+     * 检查一批主键是否存在
+     */
     @Override
     public Long existsKeys(Collection<String> keys) {
         if (keys == null || keys.isEmpty()) {
@@ -62,50 +80,72 @@ public class RedisClusterSession implements RedisSession {
         }
 
         String[] keyAry = new String[keys.size()];
-        return cluster.exists(keys.toArray(keyAry));
+        return jedis.exists(keys.toArray(keyAry));
     }
 
+    /**
+     * 主键
+     */
     @Override
-    public RedisClusterSession key(String key) {
+    public RedisSessionImpl key(String key) {
         AssertUtil.notEmpty(key, "redis key cannot be empty");
         _key = key;
         return this;
     }
 
+    /**
+     * 设置超时（一般跟在 key 后面）
+     *
+     * @param seconds 秒数（+num 过期秒数；-1永不过期）
+     */
     @Override
-    public RedisClusterSession expire(int seconds) {
+    public RedisSessionImpl expire(int seconds) {
         _seconds = seconds;
         return this;
     }
 
+    /**
+     * 设置为持续存在（即不超时）
+     */
     @Override
-    public RedisClusterSession persist() {
+    public RedisSessionImpl persist() {
         _seconds = -1;
         return this;
     }
 
     private void expirePush() {
         if (_seconds > 0) {
-            cluster.expire(_key, _seconds);
+            jedis.expire(_key, _seconds);
         }
 
         if (_seconds < 0) {
-            cluster.persist(_key); //持续存在
+            jedis.persist(_key); //持续存在
         }
     }
 
 
+    /**
+     * 尝试延期
+     */
     @Override
     public void delay() {
         expirePush();
     }
 
+    /**
+     * 尝试延期
+     */
     @Override
     public void delay(int seconds) {
         _seconds = seconds;
         expirePush();
     }
 
+    /**
+     * 主键扫描
+     *
+     * @param keyPattern 模式（?表示1+, *表示0+）
+     */
     @Override
     public List<String> scan(String keyPattern, int count) {
         String cursor = ScanParams.SCAN_POINTER_START;
@@ -114,9 +154,14 @@ public class RedisClusterSession implements RedisSession {
         p.count(count);
         p.match(keyPattern);
 
-        return cluster.scan(cursor, p).getResult();
+        return jedis.scan(cursor, p).getResult();
     }
 
+    /**
+     * 主键匹配
+     *
+     * @param keyPattern 模式（?表示1+, *表示0+）
+     */
     @Override
     public boolean match(String keyPattern) {
         List<String> temp = scan(keyPattern, 1);
@@ -124,56 +169,83 @@ public class RedisClusterSession implements RedisSession {
     }
 
 
+    /**
+     * 主键是否存在
+     */
     @Override
     public Boolean exists() {
-        return cluster.exists(_key);
+        return jedis.exists(_key);
     }
 
+    /**
+     * 主键删除
+     */
     @Override
     public Boolean delete() {
-        return cluster.del(_key) > 0;
+        return jedis.del(_key) > 0;
     }
 
+    /**
+     * 主键重命名
+     */
     @Override
     public void rename(String newKey) {
-        cluster.rename(_key, newKey);
+        jedis.rename(_key, newKey);
     }
 
 
+    /**
+     * 获取剩余时间
+     */
     @Override
     public long ttl() {
-        return cluster.ttl(_key);
+        return jedis.ttl(_key);
     }
 
+    /**
+     * 获取主键
+     */
     @Override
     public Set<String> keys(String pattern) {
-        return cluster.keys(pattern);
+        return jedis.keys(pattern);
     }
 
     //------
     //value::
 
+    /**
+     * 设置主键对应的值
+     */
     @Override
-    public RedisClusterSession set(String val) {
+    public RedisSessionImpl set(String val) {
         AssertUtil.notNull(val, "redis value cannot be null");
 
-        cluster.set(_key, val);
+        jedis.set(_key, val);
         expirePush();
 
         return this;
     }
 
+    /**
+     * 设置主键对应的值
+     */
     @Override
-    public RedisClusterSession set(long val) {
+    public RedisSessionImpl set(long val) {
         return set(String.valueOf(val));
     }
 
 
+    /**
+     * 获取主键对应的值
+     */
     @Override
     public String get() {
-        return cluster.get(_key);
+        return jedis.get(_key);
     }
 
+    /**
+     * 获取主键对应的值，并转为长整型
+     */
     @Override
     public long getAsLong() {
         String temp = get();
@@ -185,36 +257,51 @@ public class RedisClusterSession implements RedisSession {
     }
 
 
+    /**
+     * 获取多个主键值
+     */
     @Override
     public List<String> getMore(String... keys) {
-        return cluster.mget(keys);
+        return jedis.mget(keys);
     }
 
 
+    /**
+     * 主键对应的值，原子增量
+     */
     @Override
     public long incr(long num) {
-        long val = cluster.incrBy(_key, num);
+        long val = jedis.incrBy(_key, num);
         expirePush();
 
         return val;
     }
 
+    /**
+     * 主键对应的值，原子增量
+     */
     @Override
     public long incr() {
-        long val = cluster.incr(_key);
+        long val = jedis.incr(_key);
         expirePush();
 
         return val;
     }
 
+    /**
+     * 主键对应的值，原子减量
+     */
     @Override
     public long decr() {
-        long val = cluster.decr(_key);
+        long val = jedis.decr(_key);
         expirePush();
 
         return val;
     }
 
+    /**
+     * 主键尝试锁一个值
+     */
     @Override
     public boolean lock(String val) {
         /**
@@ -226,11 +313,14 @@ public class RedisClusterSession implements RedisSession {
          * */
 
         SetParams options = new SetParams().nx().ex(_seconds);
-        String rst = cluster.set(_key, val, options); //设置成功，返回 1 。//设置失败，返回 0 。
+        String rst = jedis.set(_key, val, options); //设置成功，返回 1 。//设置失败，返回 0 。
 
         return LOCK_SUCCEED.equals(rst);//成功获得锁
     }
 
+    /**
+     * 主键尝试锁
+     */
     @Override
     public boolean lock() {
         return lock(System.currentTimeMillis() + "");
@@ -242,9 +332,14 @@ public class RedisClusterSession implements RedisSession {
 
     @Override
     public Boolean hashHas(String field) {
-        return cluster.hexists(_key, field);
+        return jedis.hexists(_key, field);
     }
 
+    /**
+     * 哈希字段扫描
+     *
+     * @param fieldPattern 字段模式（?表示1+, *表示0+）
+     */
     @Override
     public List<Map.Entry<String, String>> hashScan(String fieldPattern, int count) {
         String cursor = ScanParams.SCAN_POINTER_START;
@@ -253,13 +348,12 @@ public class RedisClusterSession implements RedisSession {
         p.count(count);
         p.match(fieldPattern);
 
-        return cluster.hscan(_key.getBytes(StandardCharsets.UTF_8), cursor.getBytes(StandardCharsets.UTF_8), p)
-                .getResult()
-                .stream()
-                .map(item -> new AbstractMap.SimpleEntry<>(new String(item.getKey()), new String(item.getValue())))
-                .collect(Collectors.toList());
+        return jedis.hscan(_key, cursor, p).getResult();
     }
 
+    /**
+     * 哈希字段匹配
+     */
     @Override
     public boolean hashMatch(String fieldPattern) {
         List<Map.Entry<String, String>> temp = hashScan(fieldPattern, 1);
@@ -267,29 +361,39 @@ public class RedisClusterSession implements RedisSession {
         return (temp != null && temp.size() > 0);
     }
 
+    /**
+     * 哈希字段删除
+     */
     @Override
     public long hashDel(String... fields) {
-        return cluster.hdel(_key, fields);
+        return jedis.hdel(_key, fields);
     }
 
+    /**
+     * 哈希字段设置
+     */
     @Override
-    public RedisClusterSession hashSet(String field, String val) {
-        cluster.hset(_key, field, val);
+    public RedisSessionImpl hashSet(String field, String val) {
+        jedis.hset(_key, field, val);
         expirePush();
 
         return this;
     }
 
+    /**
+     * 哈希字段设置
+     */
     @Override
-    public RedisClusterSession hashSet(String field, long val) {
+    public RedisSessionImpl hashSet(String field, long val) {
         return hashSet(field, String.valueOf(val));
     }
 
+    /**
+     * 哈希字段批量设置（管道模式操作）
+     */
     @Override
-    public RedisClusterSession hashSetAll(Map<? extends String, ? extends String> map) {
-        map.forEach((k, v) ->
-                this.cluster.hset(_key, k, v)
-        );
+    public RedisSessionImpl hashSetAll(Map<String, String> map) {
+        jedis.hset(_key, map);
 
         expirePush();
 
@@ -297,19 +401,28 @@ public class RedisClusterSession implements RedisSession {
     }
 
 
+    /**
+     * 哈希字段增量操作
+     */
     @Override
     public long hashIncr(String field, long num) {
-        long val = cluster.hincrBy(_key, field, num);
+        long val = jedis.hincrBy(_key, field, num);
         expirePush();
 
         return val;
     }
 
+    /**
+     * 哈希字段获取
+     */
     @Override
     public String hashGet(String field) {
-        return cluster.hget(_key, field);
+        return jedis.hget(_key, field);
     }
 
+    /**
+     * 哈希字段获取并转为长整型
+     */
     @Override
     public long hashGetAsLong(String field) {
         String temp = hashGet(field);
@@ -321,126 +434,177 @@ public class RedisClusterSession implements RedisSession {
         }
     }
 
+    /**
+     * 哈希字段多个获取
+     */
     @Override
     public List<String> hashGetMore(String... fields) {
-        return cluster.hmget(_key, fields);
+        return jedis.hmget(_key, fields);
     }
 
+    /**
+     * 哈希获取所有字段
+     */
     @Override
     public LocalHash hashGetAll() {
-        return new LocalHash(cluster.hgetAll(_key));
+        return new LocalHash(jedis.hgetAll(_key));
     }
 
+    /**
+     * 哈希获取所有字段名
+     */
     @Override
     public Set<String> hashGetAllKeys() {
-        return cluster.hkeys(_key);
+        return jedis.hkeys(_key);
     }
 
+    /**
+     * 哈希获取所有字段值
+     */
     @Override
     public List<String> hashGetAllValues() {
-        return cluster.hvals(_key);
+        return jedis.hvals(_key);
     }
 
+    /**
+     * 哈希长度
+     */
     @Override
     public long hashLen() {
-        return cluster.hlen(_key);
+        return jedis.hlen(_key);
     }
 
 
     //------------------
     //list::
 
+    /**
+     * 列表添加项
+     */
     @Override
-    public RedisClusterSession listAdd(String item) {
-        cluster.lpush(_key, item); //左侧压进
+    public RedisSessionImpl listAdd(String item) {
+        jedis.lpush(_key, item); //左侧压进
         expirePush();
 
         return this;
     }
 
+    /**
+     * 列表添加项
+     */
     @Override
-    public RedisClusterSession listAdd(long item) {
+    public RedisSessionImpl listAdd(long item) {
         return listAdd(String.valueOf(item));
     }
 
+    /**
+     * 列表设置位置对应的项
+     */
     @Override
-    public RedisClusterSession listSet(int index, String newValue) {
-        cluster.lset(_key, index, newValue);
+    public RedisSessionImpl listSet(int index, String newValue) {
+        jedis.lset(_key, index, newValue);
         expirePush();
 
         return this;
     }
 
+    /**
+     * 列表删除项
+     * <p>
+     * count > 0 : 从表头开始向表尾搜索，移除与 VALUE 相等的元素，数量为 COUNT 。
+     * count < 0 : 从表尾开始向表头搜索，移除与 VALUE 相等的元素，数量为 COUNT 的绝对值。
+     * count = 0 : 移除表中所有与 VALUE 相等的值。
+     */
     @Override
-    public RedisClusterSession listDel(String item, int count) {
-        cluster.lrem(_key, count, item); //左侧压进
+    public RedisSessionImpl listDel(String item, int count) {
+        jedis.lrem(_key, count, item); //左侧压进
         expirePush();
 
         return this;
     }
 
+    /**
+     * 列表删除项
+     */
     @Override
-    public RedisClusterSession listDel(String item) {
+    public RedisSessionImpl listDel(String item) {
         return listDel(item, 0);
     }
 
     @Override
-    public RedisClusterSession listDelRange(Collection<? extends String> items) {
+    public RedisSessionImpl listDelRange(Collection<? extends String> items) {
         for (String item : items) {
-            this.cluster.lrem(_key, 0, item); //左侧压进
+            jedis.lrem(_key, 0, item); //左侧压进
         }
 
         expirePush();
 
         return this;
     }
+
+    /**
+     * 列表批量添加项
+     */
 
     @Override
-    public RedisClusterSession listAddRange(Collection<? extends String> items) {
-        for (String item : items) {
-            this.cluster.lpush(_key, item); //左侧压进
-        }
+    public RedisSessionImpl listAddRange(Collection<? extends String> items) {
+        jedis.lpush(_key, items.toArray(new String[items.size()]));
 
         expirePush();
 
         return this;
     }
 
+    /**
+     * 列表冒出
+     */
     @Override
     public String listPop() {
-        return cluster.rpop(_key); //右侧推出
+        return jedis.rpop(_key); //右侧推出
     }
 
+    /**
+     * 列表预览
+     */
     @Override
     public String listPeek() {
-        return cluster.lindex(_key, -1);  //右侧推出（先进先出）
+        return jedis.lindex(_key, -1);  //右侧推出（先进先出）
     }
 
+    /**
+     * 列表获取项（先进先出，从right 取）
+     */
     @Override
     public String listGet(int index) {
-        return cluster.lindex(_key, index); //从right取
+        return jedis.lindex(_key, index); //从right取
     }
 
+    /**
+     * 列表分页获取项（先进先出，从right取）
+     */
     @Override
     public List<String> listGetRange(int start, int end) {
-        return cluster.lrange(_key, start, end);
+        return jedis.lrange(_key, start, end);
     }
 
     @Override
     public List<String> listGetAll() {
-        return cluster.lrange(_key, 0, -1);
+        return jedis.lrange(_key, 0, -1);
     }
 
+    /**
+     * 列表长度
+     */
     @Override
     public long listLen() {
-        return cluster.llen(_key);
+        return jedis.llen(_key);
     }
 
     //------------------
     //Sset::
     @Override
     public long setAdd(String item) {
-        long tmp = cluster.sadd(_key, item); //左侧压进
+        long tmp = jedis.sadd(_key, item); //左侧压进
         expirePush();
 
         return tmp;
@@ -448,13 +612,13 @@ public class RedisClusterSession implements RedisSession {
 
     @Override
     public long setDel(String item) {
-        long tmp = cluster.srem(_key, item); //左侧压进
+        long tmp = jedis.srem(_key, item); //左侧压进
         return tmp;
     }
 
     @Override
-    public RedisClusterSession setAddRange(Collection<String> items) {
-        this.cluster.sadd(_key, items.toArray(new String[items.size()])); //左侧压进
+    public RedisSessionImpl setAddRange(Collection<String> items) {
+        jedis.sadd(_key, items.toArray(new String[items.size()])); //左侧压进
 
         expirePush();
 
@@ -463,17 +627,17 @@ public class RedisClusterSession implements RedisSession {
 
     @Override
     public long setLen() {
-        return cluster.scard(this._key);
+        return jedis.scard(this._key);
     }
 
     @Override
     public String setPop() {
-        return cluster.spop(_key); //右侧推出
+        return jedis.spop(_key); //右侧推出
     }
 
     @Override
     public List<String> setGet(int count) {
-        return cluster.srandmember(_key, count);
+        return jedis.srandmember(_key, count);
     }
 
     @Override
@@ -484,11 +648,7 @@ public class RedisClusterSession implements RedisSession {
         p.count(count);
         p.match(itemPattern);
 
-        return cluster.sscan(_key.getBytes(StandardCharsets.UTF_8), cursor.getBytes(StandardCharsets.UTF_8), p)
-                .getResult()
-                .stream()
-                .map(String::new)
-                .collect(Collectors.toList());
+        return jedis.sscan(_key, cursor, p).getResult();
     }
 
     @Override
@@ -500,8 +660,8 @@ public class RedisClusterSession implements RedisSession {
     //------------------
     //Sort set::
     @Override
-    public RedisClusterSession zsetAdd(double score, String item) {
-        cluster.zadd(_key, score, item);
+    public RedisSessionImpl zsetAdd(double score, String item) {
+        jedis.zadd(_key, score, item);
         expirePush();
 
         return this;
@@ -509,24 +669,24 @@ public class RedisClusterSession implements RedisSession {
 
     @Override
     public long zsetDel(String... items) {
-        long tmp = cluster.zrem(_key, items);
+        long tmp = jedis.zrem(_key, items);
         return tmp;
     }
 
     @Override
     public long zsetLen() {
-        return cluster.zcard(_key);
+        return jedis.zcard(_key);
     }
 
     @Override
-    public Set<String> zsetGet(long start, long end) {
-        return cluster.zrange(_key, start, end);
+    public Collection<String> zsetGet(long start, long end) {
+        return jedis.zrange(_key, start, end);
     }
 
 
     @Override
     public long zsetIdx(String item) {
-        Long tmp = cluster.zrank(_key, item);
+        Long tmp = jedis.zrank(_key, item);
         if (tmp == null) {
             return -1;
         } else {
@@ -542,7 +702,7 @@ public class RedisClusterSession implements RedisSession {
         p.count(count);
         p.match(itemPattern);
 
-        return cluster.zscan(_key.getBytes(StandardCharsets.UTF_8), cursor.getBytes(StandardCharsets.UTF_8), p).getResult();
+        return jedis.zscan(_key, cursor, p).getResult();
     }
 
     @Override
@@ -553,43 +713,40 @@ public class RedisClusterSession implements RedisSession {
 
     //------------------
     //geo::
-
     @Override
     public long geoAdd(double lng, double lat, String member) {
-        long tmp = cluster.geoadd(_key, lng, lat, member);
+        long tmp = jedis.geoadd(_key, lng, lat, member);
         expirePush();
         return tmp;
     }
 
     @Override
     public long geoAddAll(Map<String, GeoCoordinate> memberMap) {
-        long tmp = cluster.geoadd(_key, memberMap);
+        long tmp = jedis.geoadd(_key, memberMap);
         expirePush();
         return tmp;
     }
 
     @Override
     public List<GeoRadiusResponse> geoGetByRadius(double centerLng, double centerLat, long radius) {
-        return cluster.georadius(_key, centerLng, centerLat, radius, GeoUnit.M);
+        return jedis.georadius(_key, centerLng, centerLat, radius, GeoUnit.M);
     }
 
     @Override
     public long geoDist(String member1, String member2) {
-        return cluster.geodist(_key, member1, member2, GeoUnit.M).longValue();
+        return jedis.geodist(_key, member1, member2, GeoUnit.M).longValue();
     }
 
     //------------------
     //message::
-
-
     @Override
     public long publish(String channel, String message) {
-        return cluster.publish(channel, message);
+        return jedis.publish(channel, message);
     }
 
     @Override
     public void subscribe(JedisPubSub jedisPubSub, String... channels) {
-        cluster.subscribe(jedisPubSub, channels);
+        jedis.subscribe(jedisPubSub, channels);
     }
 
 }

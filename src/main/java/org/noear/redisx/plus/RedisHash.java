@@ -5,10 +5,7 @@ import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.SerializationUtil;
 import org.noear.redisx.utils.TextUtil;
 
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author noear
@@ -136,7 +133,8 @@ public class RedisHash implements Map<String,String> {
 
     @Override
     public void putAll(Map<? extends String, ? extends String> m) {
-        client.open(s -> s.key(hashName).hashSetAll(m));
+        Map<String,String> map2 = new HashMap<>(m);
+        client.open(s -> s.key(hashName).hashSetAll(map2));
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.noear.redisx;
 
 import org.noear.redisx.model.LocalHash;
 import redis.clients.jedis.*;
+import redis.clients.jedis.resps.GeoRadiusResponse;
+import redis.clients.jedis.resps.Tuple;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,7 +20,7 @@ public interface RedisSession extends AutoCloseable {
     /**
      * 获取jedis原始对象
      */
-    Jedis jedis();
+    UnifiedJedis jedis();
 
     /**
      * 删除一批主键
@@ -178,7 +180,7 @@ public interface RedisSession extends AutoCloseable {
     /**
      * 哈希字段批量设置
      */
-    RedisSession hashSetAll(Map<? extends String, ? extends String> map);
+    RedisSession hashSetAll(Map<String, String> map);
 
     /**
      * 哈希字段增量操作
@@ -309,7 +311,7 @@ public interface RedisSession extends AutoCloseable {
 
     long zsetLen();
 
-    Set<String> zsetGet(long start, long end);
+    Collection<String> zsetGet(long start, long end);
 
     long zsetIdx(String item);
 

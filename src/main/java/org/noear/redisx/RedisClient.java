@@ -16,15 +16,11 @@ import java.util.function.Function;
  * @author noear
  * @since 1.0
  */
-public class RedisClient {
+public class RedisClient implements AutoCloseable {
     /**
-     * 连接池
+     * 统一接口
      */
-    private JedisPool jedisPool;
-    /**
-     * 集群连接池
-     */
-    private JedisCluster jedisCluster;
+    private UnifiedJedis unifiedJedis;
 
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");
@@ -67,7 +63,7 @@ public class RedisClient {
         }
 
         //开始初始化
-        JedisPoolConfig config = new JedisPoolConfig();
+        ConnectionPoolConfig config = new ConnectionPoolConfig();
 
         if (db < 0) {
             db = 0;
@@ -77,7 +73,7 @@ public class RedisClient {
             maxTotal = 200;
         }
 
-        if(maxIdle == 0){
+        if (maxIdle == 0) {
             maxIdle = maxTotal;
         }
 
@@ -91,15 +87,15 @@ public class RedisClient {
             maxWaitMillis = 3000;
         }
 
-        if(maxAttempts == 0){
+        if (maxAttempts == 0) {
             maxAttempts = 5;
         }
 
-        if(connectionTimeout == 0){
+        if (connectionTimeout == 0) {
             connectionTimeout = 3000;
         }
 
-        if(soTimeout == 0){
+        if (soTimeout == 0) {
             soTimeout = connectionTimeout;
         }
 
@@ -122,21 +118,20 @@ public class RedisClient {
             }
 
             if (TextUtil.isEmpty(user)) {
-                this.jedisCluster = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, password, config);
+                this.unifiedJedis = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, null, password, null, config);
             } else {
-                this.jedisCluster = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, user, password, null, config);
+                this.unifiedJedis = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, user, password, null, config);
             }
         } else {
-            String[] ss = server.split(":");
-
+            String[] hp = server.split(":");
             if ("".equals(password)) {
                 password = null;
             }
 
             if (TextUtil.isEmpty(user)) {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), connectionTimeout, password, db);
+                this.unifiedJedis = new JedisPooled(config, hp[0], Integer.parseInt(hp[1]), connectionTimeout, password, db);
             } else {
-                jedisPool = new JedisPool(config, ss[0], Integer.parseInt(ss[1]), connectionTimeout, user, password, db);
+                this.unifiedJedis = new JedisPooled(config, hp[0], Integer.parseInt(hp[1]), connectionTimeout, user, password, db);
             }
         }
     }
@@ -184,12 +179,7 @@ public class RedisClient {
      * 打开会话（需要自己关闭）
      */
     public RedisSession openSession() {
-        if(this.jedisPool != null) {
-            Jedis jx = jedisPool.getResource();
-            return new RedisSingleSession(jx);
-        } else {
-            return new RedisClusterSession(this.jedisCluster);
-        }
+        return new RedisSessionImpl(this.unifiedJedis);
     }
 
     ////////////////////
@@ -258,4 +248,10 @@ public class RedisClient {
         return new RedisId(this, idName);
     }
 
+    @Override
+    public void close() throws Exception {
+        if (unifiedJedis != null) {
+            unifiedJedis.close();
+        }
+    }
 }

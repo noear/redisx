@@ -41,6 +41,7 @@ public class RedisClient implements AutoCloseable {
     }
 
     private void initDo(Properties prop, int db, int maxTotal) {
+        //1.转换参数
         String server = prop.getProperty("server");
         String user = prop.getProperty("user");
         String password = prop.getProperty("password");
@@ -62,8 +63,6 @@ public class RedisClient implements AutoCloseable {
             maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
         }
 
-        //开始初始化
-        ConnectionPoolConfig config = new ConnectionPoolConfig();
 
         if (db < 0) {
             db = 0;
@@ -99,41 +98,49 @@ public class RedisClient implements AutoCloseable {
             soTimeout = connectionTimeout;
         }
 
-        config.setMaxTotal(maxTotal);
-        config.setMaxIdle(maxIdle);
-        config.setMinIdle(minIdle);
-        config.setMaxWaitMillis(maxWaitMillis);
-        config.setTestOnBorrow(false);
-        config.setTestOnReturn(false);
+        //2.构建连接池配置
+        ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
+        poolConfig.setMaxTotal(maxTotal);
+        poolConfig.setMaxIdle(maxIdle);
+        poolConfig.setMinIdle(minIdle);
+        poolConfig.setMaxWaitMillis(maxWaitMillis);
+        poolConfig.setTestOnBorrow(false);
+        poolConfig.setTestOnReturn(false);
+
+        //3.构建客户端配置
+        DefaultJedisClientConfig.Builder clientConfigBuilder = DefaultJedisClientConfig.builder();
+        clientConfigBuilder.connectionTimeoutMillis(connectionTimeout);
+
+        if (TextUtil.isEmpty(password) == false) {
+            clientConfigBuilder.password(password);
+        }
+        if (TextUtil.isEmpty(user) == false) {
+            clientConfigBuilder.user(user);
+        }
+        clientConfigBuilder.database(db);
+
+        DefaultJedisClientConfig clientConfig = clientConfigBuilder.build();
 
 
-        // 判断是否为 Redis 集群
+        //4.构建客户端
         if (server.contains(",")) {
             Set<HostAndPort> nodes = new HashSet<>();
             for (String fqdn : server.split(",")) {
                 if (TextUtil.isEmpty(fqdn) == false) {
-                    String[] info = fqdn.split(":");
-                    nodes.add(new HostAndPort(info[0], Integer.parseInt(info[1])));
+                    nodes.add(parseAddr(fqdn));
                 }
             }
 
-            if (TextUtil.isEmpty(user)) {
-                this.unifiedJedis = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, null, password, null, config);
-            } else {
-                this.unifiedJedis = new JedisCluster(nodes, connectionTimeout, soTimeout, maxAttempts, user, password, null, config);
-            }
+            this.unifiedJedis = new JedisCluster(nodes, clientConfig, maxAttempts, poolConfig);
         } else {
-            String[] hp = server.split(":");
-            if ("".equals(password)) {
-                password = null;
-            }
-
-            if (TextUtil.isEmpty(user)) {
-                this.unifiedJedis = new JedisPooled(config, hp[0], Integer.parseInt(hp[1]), connectionTimeout, password, db);
-            } else {
-                this.unifiedJedis = new JedisPooled(config, hp[0], Integer.parseInt(hp[1]), connectionTimeout, user, password, db);
-            }
+            HostAndPort hostAndPort = parseAddr(server);
+            this.unifiedJedis = new JedisPooled(poolConfig, hostAndPort, clientConfig);
         }
+    }
+
+    private HostAndPort parseAddr(String addr) {
+        String[] hp = addr.split(":");
+        return new HostAndPort(hp[0], Integer.parseInt(hp[1]));
     }
 
     @Deprecated

@@ -1,9 +1,13 @@
+### 1.4.2
+* jedis 升级为 4.2.2
+* 重新基于 UnifiedJedis 接口适配
+
 ### 1.4.1
 * 增加集群模式支持
 
 ```yaml
 test.rd1:
-  server: "localhost:6379,localhost:6380,localhost:6381"
+  server: "localhost:6379,"
   password: 123456
 ```
 

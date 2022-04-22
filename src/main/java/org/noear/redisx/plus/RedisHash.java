@@ -133,8 +133,7 @@ public class RedisHash implements Map<String,String> {
 
     @Override
     public void putAll(Map<? extends String, ? extends String> m) {
-        Map<String,String> map2 = new HashMap<>(m);
-        client.open(s -> s.key(hashName).hashSetAll(map2));
+        client.open(s -> s.key(hashName).hashSetAll(m));
     }
 
     @Override

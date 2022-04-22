@@ -180,7 +180,7 @@ public interface RedisSession extends AutoCloseable {
     /**
      * 哈希字段批量设置
      */
-    RedisSession hashSetAll(Map<String, String> map);
+    RedisSession hashSetAll(Map<? extends String, ? extends String> map);
 
     /**
      * 哈希字段增量操作

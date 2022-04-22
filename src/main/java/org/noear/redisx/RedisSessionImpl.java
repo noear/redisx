@@ -10,10 +10,7 @@ import redis.clients.jedis.params.SetParams;
 import redis.clients.jedis.resps.GeoRadiusResponse;
 import redis.clients.jedis.resps.Tuple;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Redis 会话
@@ -385,8 +382,9 @@ public class RedisSessionImpl implements RedisSession {
      * 哈希字段批量设置（管道模式操作）
      */
     @Override
-    public RedisSessionImpl hashSetAll(Map<String, String> map) {
-        jedis.hset(_key, map);
+    public RedisSessionImpl hashSetAll(Map<? extends String, ? extends String> map) {
+        Map<String,String> map2 = new HashMap<>(map);
+        jedis.hset(_key, map2);
 
         expirePush();
 

@@ -5,6 +5,7 @@ import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.args.GeoUnit;
+import redis.clients.jedis.json.JsonSetParams;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.params.SetParams;
 import redis.clients.jedis.resps.GeoRadiusResponse;
@@ -739,6 +740,7 @@ public class RedisSessionImpl implements RedisSession {
     @Override
     public void jsonSet(String key, Object obj) {
         jedis.jsonSet( key, obj);
+        expirePush();
     }
 
     //------------------

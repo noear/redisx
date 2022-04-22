@@ -329,12 +329,6 @@ public interface RedisSession extends AutoCloseable {
 
     long geoDist(String member1, String member2);
 
-    //------------------
-    //Json
-    Object jsonGet(String key);
-
-    String jsonSet(String key, Object obj);
-
 
     //------------------
     //Bus

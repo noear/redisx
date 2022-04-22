@@ -11,6 +11,8 @@ import org.noear.solon.test.SolonJUnit4ClassRunner;
 import org.noear.solon.test.SolonTest;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author noear 2021/10/12 created
@@ -103,6 +105,31 @@ public class DemoTest {
 
         redisHash.put("id", 1);
         redisHash.put("name", "demo");
+
+        OrderDo orderDo = new OrderDo();
+        orderDo.id = 10001;
+        orderDo.traceId = "demo";
+        orderDo.note = "test demo";
+        redisHash.putAndSerialize("order", orderDo);
+
+        assert redisHash.getAsInt("id") == 1;
+
+        OrderDo orderDo1 = redisHash.getAndDeserialize("order");
+        assert orderDo1.id == orderDo.id;
+
+        assert redisHash.size() == 3;
+    }
+
+    @Test
+    public void test_hashAll() {
+        //--- hash 使用
+        RedisHash redisHash = client.getHash("user:112");
+
+        Map<String,String> map = new HashMap<>();
+        map.put("id", "1");
+        map.put("name", "demo");
+
+        redisHash.putAll(map);
 
         OrderDo orderDo = new OrderDo();
         orderDo.id = 10001;

@@ -333,7 +333,7 @@ public interface RedisSession extends AutoCloseable {
     //Json
     Object jsonGet(String key);
 
-    void jsonSet(String key, Object obj);
+    String jsonSet(String key, Object obj);
 
 
     //------------------

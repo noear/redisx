@@ -738,9 +738,11 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     @Override
-    public void jsonSet(String key, Object obj) {
-        jedis.jsonSet( key, obj);
+    public String jsonSet(String key, Object obj) {
+        String tmp = jedis.jsonSet( key, obj);
         expirePush();
+
+        return tmp;
     }
 
     //------------------

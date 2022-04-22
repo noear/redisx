@@ -31,19 +31,12 @@ public class RedisSessionImpl implements RedisSession {
         this.jedis = jedis;
     }
 
-    //private boolean _close = false;
-
     /**
      * 关闭会话
      */
     @Override
     public void close() throws Exception {
-//        if (_close) {
-//            return;
-//        }
-//
-//        jedis.close(); //不再需要关闭了
-//        _close = true;
+        //不再需要关闭了
     }
 
     private String _key;

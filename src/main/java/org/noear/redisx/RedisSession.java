@@ -319,6 +319,8 @@ public interface RedisSession extends AutoCloseable {
 
     boolean zsetMatch(String itemPattern);
 
+    //------------------
+    //Geo
     long geoAdd(double lng, double lat, String member);
 
     long geoAddAll(Map<String, GeoCoordinate> memberMap);
@@ -327,6 +329,15 @@ public interface RedisSession extends AutoCloseable {
 
     long geoDist(String member1, String member2);
 
+    //------------------
+    //Json
+    Object jsonGet(String key);
+
+    void jsonSet(String key, Object obj);
+
+
+    //------------------
+    //Bus
     long publish(String channel, String message);
 
     void subscribe(JedisPubSub jedisPubSub, String... channels);

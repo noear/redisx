@@ -729,6 +729,19 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     //------------------
+    //Json
+
+    @Override
+    public Object jsonGet(String key) {
+       return jedis.jsonGet(key);
+    }
+
+    @Override
+    public void jsonSet(String key, Object obj) {
+        jedis.jsonSet( key, obj);
+    }
+
+    //------------------
     //message::
     @Override
     public long publish(String channel, String message) {

@@ -49,6 +49,7 @@ public class RedisClient implements AutoCloseable {
         String maxWaitMillisStr = prop.getProperty("maxWaitMillis");
         String maxTotalStr = prop.getProperty("maxTotal");
         String maxIdleStr = prop.getProperty("maxIdle");
+        String minIdleStr = prop.getProperty("minIdle");
         String connectionTimeoutStr = prop.getProperty("connectionTimeout");
         String soTimeoutStr = prop.getProperty("soTimeout");
 
@@ -57,6 +58,7 @@ public class RedisClient implements AutoCloseable {
         long maxWaitMillis = (TextUtil.isEmpty(maxWaitMillisStr) ? 0L : Long.parseLong(maxWaitMillisStr));
         int maxAttempts = (TextUtil.isEmpty(maxAttemptsStr) ? 0 : Integer.parseInt(maxAttemptsStr));
         int maxIdle = (TextUtil.isEmpty(maxIdleStr) ? 0 : Integer.parseInt(maxIdleStr));
+        int minIdle = (TextUtil.isEmpty(minIdleStr) ? 0 : Integer.parseInt(minIdleStr));
         int connectionTimeout = (TextUtil.isEmpty(connectionTimeoutStr) ? 0 : Integer.parseInt(connectionTimeoutStr));
         int soTimeout = (TextUtil.isEmpty(soTimeoutStr) ? 0 : Integer.parseInt(soTimeoutStr));
 
@@ -69,18 +71,8 @@ public class RedisClient implements AutoCloseable {
             db = 0;
         }
 
-        if (maxTotal < 20) {
+        if (maxTotal < 200) {
             maxTotal = 200;
-        }
-
-        if (maxIdle == 0) {
-            maxIdle = maxTotal;
-        }
-
-
-        int minIdle = maxTotal / 100;
-        if (minIdle < 5) {
-            minIdle = 5;
         }
 
         if (maxWaitMillis < 3000) {
@@ -88,7 +80,7 @@ public class RedisClient implements AutoCloseable {
         }
 
         if (maxAttempts == 0) {
-            maxAttempts = 5;
+            maxAttempts = 3;
         }
 
         if (connectionTimeout == 0) {
@@ -101,10 +93,22 @@ public class RedisClient implements AutoCloseable {
 
         //2.构建连接池配置
         ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
-        poolConfig.setMaxTotal(maxTotal);
-        poolConfig.setMaxIdle(maxIdle);
-        poolConfig.setMinIdle(minIdle);
-        poolConfig.setMaxWait(Duration.ofMillis(maxWaitMillis));
+        if (maxTotal > 0) {
+            poolConfig.setMaxTotal(maxTotal);
+        }
+
+        if (maxIdle > 0) {
+            poolConfig.setMaxIdle(maxIdle);
+        }
+
+        if (minIdle > 0) {
+            poolConfig.setMinIdle(minIdle);
+        }
+
+        if (maxWaitMillis > 0) {
+            poolConfig.setMaxWait(Duration.ofMillis(maxWaitMillis));
+        }
+
         poolConfig.setTestOnBorrow(false);
         poolConfig.setTestOnReturn(false);
 
@@ -116,9 +120,11 @@ public class RedisClient implements AutoCloseable {
         if (TextUtil.isEmpty(password) == false) {
             clientConfigBuilder.password(password);
         }
+
         if (TextUtil.isEmpty(user) == false) {
             clientConfigBuilder.user(user);
         }
+
         clientConfigBuilder.database(db);
 
         DefaultJedisClientConfig clientConfig = clientConfigBuilder.build();

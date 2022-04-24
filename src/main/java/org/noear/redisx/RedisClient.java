@@ -51,7 +51,7 @@ public class RedisClient implements AutoCloseable {
         String maxIdleStr = prop.getProperty("maxIdle");
         String minIdleStr = prop.getProperty("minIdle");
         String connectionTimeoutStr = prop.getProperty("connectionTimeout");
-        String soTimeoutStr = prop.getProperty("soTimeout");
+        String socketTimeoutMillisStr = prop.getProperty("socketTimeoutMillis");
 
         String maxAttemptsStr = prop.getProperty("maxAttempts");
 
@@ -60,7 +60,7 @@ public class RedisClient implements AutoCloseable {
         int maxIdle = (TextUtil.isEmpty(maxIdleStr) ? 0 : Integer.parseInt(maxIdleStr));
         int minIdle = (TextUtil.isEmpty(minIdleStr) ? 0 : Integer.parseInt(minIdleStr));
         int connectionTimeout = (TextUtil.isEmpty(connectionTimeoutStr) ? 0 : Integer.parseInt(connectionTimeoutStr));
-        int soTimeout = (TextUtil.isEmpty(soTimeoutStr) ? 0 : Integer.parseInt(soTimeoutStr));
+        int socketTimeoutMillis = (TextUtil.isEmpty(socketTimeoutMillisStr) ? 0 : Integer.parseInt(socketTimeoutMillisStr));
 
         if (maxTotal == 0) {
             maxTotal = (TextUtil.isEmpty(maxTotalStr) ? 0 : Integer.parseInt(maxTotalStr));
@@ -87,10 +87,6 @@ public class RedisClient implements AutoCloseable {
             connectionTimeout = 3000;
         }
 
-        if (soTimeout == 0) {
-            soTimeout = connectionTimeout;
-        }
-
         //2.构建连接池配置
         ConnectionPoolConfig poolConfig = new ConnectionPoolConfig();
         if (maxTotal > 0) {
@@ -114,8 +110,14 @@ public class RedisClient implements AutoCloseable {
 
         //3.构建客户端配置
         DefaultJedisClientConfig.Builder clientConfigBuilder = DefaultJedisClientConfig.builder();
-        clientConfigBuilder.connectionTimeoutMillis(connectionTimeout);
-        clientConfigBuilder.socketTimeoutMillis(soTimeout);
+
+        if (connectionTimeout > 0) {
+            clientConfigBuilder.connectionTimeoutMillis(connectionTimeout);
+        }
+
+        if (socketTimeoutMillis > 0) {
+            clientConfigBuilder.socketTimeoutMillis(socketTimeoutMillis);
+        }
 
         if (TextUtil.isEmpty(password) == false) {
             clientConfigBuilder.password(password);

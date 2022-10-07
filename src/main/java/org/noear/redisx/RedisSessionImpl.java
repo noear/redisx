@@ -23,11 +23,9 @@ public class RedisSessionImpl implements RedisSession {
     private static final String LOCK_SUCCEED = "OK";
 
     private final UnifiedJedis jedis;
-    private final Serializer serializer;
 
-    protected RedisSessionImpl(UnifiedJedis jedis, Serializer serializer) {
+    protected RedisSessionImpl(UnifiedJedis jedis) {
         this.jedis = jedis;
-        this.serializer = serializer;
     }
 
     /**
@@ -47,11 +45,6 @@ public class RedisSessionImpl implements RedisSession {
     @Override
     public UnifiedJedis jedis() {
         return jedis;
-    }
-
-    @Override
-    public Serializer serializer() {
-        return serializer;
     }
 
     /**
@@ -231,16 +224,6 @@ public class RedisSessionImpl implements RedisSession {
         return set(String.valueOf(val));
     }
 
-    @Override
-    public RedisSession setAndSerialize(Object obj) {
-        AssertUtil.notNull(obj, "redis value cannot be null");
-
-        String value = serializer().encode(obj);
-
-        jedis.set(_key, value);
-        expirePush();
-        return this;
-    }
 
 
     /**
@@ -261,16 +244,6 @@ public class RedisSessionImpl implements RedisSession {
             return 0L;
         } else {
             return Long.parseLong(temp);
-        }
-    }
-
-    @Override
-    public <T> T getAndDeserialize() {
-        String temp = get();
-        if (TextUtil.isEmpty(temp)) {
-            return null;
-        } else {
-            return (T) serializer().decode(temp);
         }
     }
 

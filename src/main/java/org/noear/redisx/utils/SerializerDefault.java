@@ -1,6 +1,6 @@
-package org.noear.redisx;
+package org.noear.redisx.utils;
 
-import org.noear.redisx.utils.SerializationUtil;
+import org.noear.redisx.Serializer;
 
 import java.util.Base64;
 
@@ -10,7 +10,7 @@ import java.util.Base64;
  * @author noear
  * @since 1.3
  */
-public class SerializerDefault implements Serializer{
+public class SerializerDefault implements Serializer {
     @Override
     public String encode(Object obj) {
         byte[] bytes = SerializationUtil.serialize(obj);

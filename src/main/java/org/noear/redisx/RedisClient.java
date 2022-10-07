@@ -1,6 +1,7 @@
 package org.noear.redisx;
 
 import org.noear.redisx.plus.*;
+import org.noear.redisx.utils.SerializerDefault;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 
@@ -206,7 +207,7 @@ public class RedisClient implements AutoCloseable {
      * 打开会话（需要自己关闭）
      */
     public RedisSession openSession() {
-        return new RedisSessionImpl(this.unifiedJedis, this.serializer);
+        return new RedisSessionImpl(this.unifiedJedis);
     }
 
     ////////////////////

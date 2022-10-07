@@ -3,7 +3,9 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 import org.noear.redisx.utils.AssertUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -64,16 +66,34 @@ public class RedisBucket {
         return client.openAndGet(s -> s.key(key).get());
     }
 
+    public List<String> getByKeys(String... keys) {
+        return client.openAndGet(s -> s.getMore(keys));
+    }
+
     /**
      * 获取并反序列化
      */
     public <T> T getAndDeserialize(String key) {
-        String val = client.openAndGet(s -> s.key(key).get());
+        String val = get(key);
 
         if (val == null) {
             return null;
         } else {
             return (T) client.serializer().decode(val);
+        }
+    }
+
+    public <T> List<T> getAndDeserializeByKeys(String... keys) {
+        List<String> vals = getByKeys(keys);
+
+        if (vals == null) {
+            return null;
+        } else {
+            List<T> list = new ArrayList<>();
+            for (String val : vals) {
+                list.add((T) client.serializer().decode(val));
+            }
+            return list;
         }
     }
 

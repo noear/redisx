@@ -22,6 +22,16 @@ public class RedisClient implements AutoCloseable {
      * 统一接口
      */
     private UnifiedJedis unifiedJedis;
+    private Serializer serializer = new SerializerDefault();
+
+    public Serializer serializer(){
+        return serializer;
+    }
+    public void serializer(Serializer serializer){
+        if(serializer != null){
+            this.serializer = serializer;
+        }
+    }
 
     public RedisClient(Properties prop) {
         String db = prop.getProperty("db");
@@ -196,7 +206,7 @@ public class RedisClient implements AutoCloseable {
      * 打开会话（需要自己关闭）
      */
     public RedisSession openSession() {
-        return new RedisSessionImpl(this.unifiedJedis);
+        return new RedisSessionImpl(this.unifiedJedis, this.serializer);
     }
 
     ////////////////////

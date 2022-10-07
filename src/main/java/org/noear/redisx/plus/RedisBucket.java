@@ -2,9 +2,7 @@ package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
 import org.noear.redisx.utils.AssertUtil;
-import org.noear.redisx.utils.SerializationUtil;
 
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -43,8 +41,7 @@ public class RedisBucket {
     public void storeAndSerialize(String key, Object obj, int inSeconds) {
         AssertUtil.notNull(obj, "redis value cannot be null");
 
-        byte[] bytes = SerializationUtil.serialize(obj);
-        String val = Base64.getEncoder().encodeToString(bytes);
+        String val = client.serializer().encode(obj);
 
         client.open(s -> s.key(key).expire(inSeconds).set(val));
     }
@@ -55,8 +52,7 @@ public class RedisBucket {
     public void storeAndSerialize(String key, Object obj) {
         AssertUtil.notNull(obj, "redis value cannot be null");
 
-        byte[] bytes = SerializationUtil.serialize(obj);
-        String val = Base64.getEncoder().encodeToString(bytes);
+        String val = client.serializer().encode(obj);
 
         client.open(s -> s.key(key).persist().set(val));
     }
@@ -77,8 +73,7 @@ public class RedisBucket {
         if (val == null) {
             return null;
         } else {
-            byte[] bytes = Base64.getDecoder().decode(val);
-            return (T) SerializationUtil.deserialize(bytes);
+            return (T) client.serializer().decode(val);
         }
     }
 

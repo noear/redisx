@@ -2,7 +2,6 @@ package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
 import org.noear.redisx.utils.AssertUtil;
-import org.noear.redisx.utils.SerializationUtil;
 import org.noear.redisx.utils.TextUtil;
 
 import java.util.*;
@@ -55,8 +54,7 @@ public class RedisHash implements Map<String,String> {
         if (val == null) {
             return null;
         } else {
-            byte[] bytes = Base64.getDecoder().decode(val);
-            return (T) SerializationUtil.deserialize(bytes);
+            return (T) client.serializer().decode(val);
         }
     }
 
@@ -89,8 +87,7 @@ public class RedisHash implements Map<String,String> {
     public void putAndSerialize(String field, Object obj) {
         AssertUtil.notNull(obj, "redis hash value cannot be null");
 
-        byte[] bytes = SerializationUtil.serialize(obj);
-        String value = Base64.getEncoder().encodeToString(bytes);
+        String value = client.serializer().encode(obj);
 
         client.open(s -> s.key(hashName).expire(inSeconds).hashSet(field, value));
     }

@@ -2,11 +2,9 @@ package org.noear.redisx;
 
 import org.noear.redisx.model.LocalHash;
 import org.noear.redisx.utils.AssertUtil;
-import org.noear.redisx.utils.SerializationUtil;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.args.GeoUnit;
-import redis.clients.jedis.json.JsonSetParams;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.params.SetParams;
 import redis.clients.jedis.resps.GeoRadiusResponse;
@@ -25,9 +23,11 @@ public class RedisSessionImpl implements RedisSession {
     private static final String LOCK_SUCCEED = "OK";
 
     private final UnifiedJedis jedis;
+    private final Serializer serializer;
 
-    protected RedisSessionImpl(UnifiedJedis jedis) {
+    protected RedisSessionImpl(UnifiedJedis jedis, Serializer serializer) {
         this.jedis = jedis;
+        this.serializer = serializer;
     }
 
     /**
@@ -47,6 +47,11 @@ public class RedisSessionImpl implements RedisSession {
     @Override
     public UnifiedJedis jedis() {
         return jedis;
+    }
+
+    @Override
+    public Serializer serializer() {
+        return serializer;
     }
 
     /**
@@ -227,11 +232,10 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     @Override
-    public RedisSession setAndSerialize(Object val) {
-        AssertUtil.notNull(val, "redis value cannot be null");
+    public RedisSession setAndSerialize(Object obj) {
+        AssertUtil.notNull(obj, "redis value cannot be null");
 
-        byte[] bytes = SerializationUtil.serialize(val);
-        String value = Base64.getEncoder().encodeToString(bytes);
+        String value = serializer().encode(obj);
 
         jedis.set(_key, value);
         expirePush();
@@ -266,8 +270,7 @@ public class RedisSessionImpl implements RedisSession {
         if (TextUtil.isEmpty(temp)) {
             return null;
         } else {
-            byte[] bytes = Base64.getDecoder().decode(temp);
-            return (T) SerializationUtil.deserialize(bytes);
+            return (T) serializer().decode(temp);
         }
     }
 

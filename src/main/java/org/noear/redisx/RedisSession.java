@@ -22,6 +22,8 @@ public interface RedisSession extends AutoCloseable {
      */
     UnifiedJedis jedis();
 
+    Serializer serializer();
+
     /**
      * 删除一批主键
      */

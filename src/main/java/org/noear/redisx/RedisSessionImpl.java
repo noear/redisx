@@ -2,6 +2,7 @@ package org.noear.redisx;
 
 import org.noear.redisx.model.LocalHash;
 import org.noear.redisx.utils.AssertUtil;
+import org.noear.redisx.utils.SerializationUtil;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 import redis.clients.jedis.args.GeoUnit;
@@ -225,6 +226,18 @@ public class RedisSessionImpl implements RedisSession {
         return set(String.valueOf(val));
     }
 
+    @Override
+    public RedisSession setAndSerialize(Object val) {
+        AssertUtil.notNull(val, "redis value cannot be null");
+
+        byte[] bytes = SerializationUtil.serialize(val);
+        String value = Base64.getEncoder().encodeToString(bytes);
+
+        jedis.set(_key, value);
+        expirePush();
+        return this;
+    }
+
 
     /**
      * 获取主键对应的值
@@ -244,6 +257,17 @@ public class RedisSessionImpl implements RedisSession {
             return 0L;
         } else {
             return Long.parseLong(temp);
+        }
+    }
+
+    @Override
+    public <T> T getAndDeserialize() {
+        String temp = get();
+        if (TextUtil.isEmpty(temp)) {
+            return null;
+        } else {
+            byte[] bytes = Base64.getDecoder().decode(temp);
+            return (T) SerializationUtil.deserialize(bytes);
         }
     }
 

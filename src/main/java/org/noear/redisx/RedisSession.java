@@ -108,6 +108,8 @@ public interface RedisSession extends AutoCloseable {
      */
     RedisSession set(long val);
 
+    RedisSession setAndSerialize(Object val);
+
     /**
      * 获取主键对应的值
      */
@@ -117,6 +119,8 @@ public interface RedisSession extends AutoCloseable {
      * 获取主键对应的值，并转为长整型
      */
     long getAsLong();
+
+    <T> T getAndDeserialize();
 
     /**
      * 获取多个主键值

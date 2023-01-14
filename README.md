@@ -33,18 +33,19 @@ test.rd1:
 可配置属性参考:
 
 
-|  属性  | 示例               | 说明                                       |
-| -------- |------------------|------------------------------------------|
-| server     | "localhost:6379" | 地址，"localhost:6379,localhost:6380" -集群模式 |
-| db     | 1                | 库号，集群模式无效                                |
-| password     | "123456"         | 密码                                       |
-| user     | "user"           | 账号，redis 6.x 新加                          |
-| maxTotal     | 200              | 最大连接数                                    |
-| maxIdle     | 200              | 最大空闲数                                    |
-| maxWaitMillis     | 3000             | 最大建立连接等待时间                               |
-| maxAttempts     | 5                | 最大重试，集群模式有效                              |
-| connectionTimeout     | 3000             | 连接超时                                     |
-| socketTimeoutMillis     | 2000             | Socket超时                                 |
+| 属性                  | 示例                   | 说明                                       |
+|---------------------|----------------------|------------------------------------------|
+| server              | "localhost:6379"     | 地址，"localhost:6379,localhost:6380" -集群模式 |
+| db                  | 1                    | 库号，集群模式无效                                |
+| password            | "123456"             | 密码                                       |
+| user                | "user"               | 账号，redis 6.x 新加                          |
+| maxTotal            | 200                  | 最大连接数                                    |
+| maxIdle             | 200                  | 最大空闲数                                    |
+| maxWaitMillis       | 3000                 | 最大建立连接等待时间                               |
+| maxAttempts         | 5                    | 最大重试，集群模式有效                              |
+| connectionTimeout   | 3000                 | 连接超时                                     |
+| socketTimeoutMillis | 2000                 | Socket超时                                 |
+| serializer          | "xxx.SerializerImpl" | 指定自定义序列化实现（一般不指定，用默认的）       |
 
 
 

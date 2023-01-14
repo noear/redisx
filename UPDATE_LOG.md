@@ -1,3 +1,15 @@
+### 1.4.5
+* 添加序列化json实现方案（非默认）
+* 添加序列化配置支持
+
+```yaml
+test.rd1:
+  server: "localhost:6379"
+  password: 123456
+  db: 1
+  serializer: "org.noear.redisx.utils.SerializerJson"
+```
+
 ### 1.4.2
 * jedis 升级为 4.2.2
 * 重新基于 UnifiedJedis 接口适配
@@ -7,7 +19,7 @@
 
 ```yaml
 test.rd1:
-  server: "localhost:6379,"
+  server: "localhost:6379,localhost:6378" #带,号是集群模式标识
   password: 123456
 ```
 

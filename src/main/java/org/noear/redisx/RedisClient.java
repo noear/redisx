@@ -53,6 +53,18 @@ public class RedisClient implements AutoCloseable {
     }
 
     private void initDo(Properties prop, int db, int maxTotal) {
+        String serializerStr = prop.getProperty("serializer");
+        if(TextUtil.isEmpty(serializerStr) == false) {
+            prop.remove("serializer");
+            try {
+                Class<?> serializerClz =  Class.forName(serializerStr);
+                Serializer serializerNew = (Serializer)serializerClz.getDeclaredConstructor().newInstance();
+                serializer(serializerNew);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
         //1.转换参数
         String server = prop.getProperty("server");
         String user = prop.getProperty("user");

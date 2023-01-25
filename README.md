@@ -26,7 +26,6 @@ test.rd1:
   server: localhost:6379
   db: 1
   password: 123456
-  serializer: "org.noear.redisx.utils.SerializerJson" #指定自定义序列化实现（默认为 SerializerDefault）
 ```
 
 

@@ -48,7 +48,10 @@ test.rd1:
 
 
 
-### 2.bean 构建（以下代码以solon演示）
+### 2.bean 构建演示
+
+* 用 solon 构建实例
+
 ```java
 @Configuration
 public class Config {
@@ -58,6 +61,22 @@ public class Config {
     }
 }
 ```
+
+* 手动构建实例
+
+```java
+public class App {
+    public static void main(String[] args){
+        Properties props = new Properties();
+        props.put("server", "localhost:6379");
+        props.put("password","123456");
+        
+        RedisClient client = new RedisClient(props);
+    }
+}
+```
+```
+
 
 ### 3.基础会话接口操作
 

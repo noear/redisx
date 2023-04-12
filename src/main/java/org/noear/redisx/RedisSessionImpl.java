@@ -215,8 +215,7 @@ public class RedisSessionImpl implements RedisSession {
         AssertUtil.notNull(val, "redis value cannot be null");
 
         if (_seconds > 0) {
-            SetParams options = new SetParams().ex(_seconds);
-            jedis.set(_key, val, options);
+            jedis.setex(_key, _seconds, val);
         } else {
             jedis.set(_key, val);
         }

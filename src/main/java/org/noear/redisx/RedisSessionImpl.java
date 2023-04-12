@@ -104,13 +104,17 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     private void expirePush() {
+        //+x: 具体时间
         if (_seconds > 0) {
             jedis.expire(_key, _seconds);
         }
 
-        if (_seconds < 0) {
+        //-1: 永久
+        if (_seconds == -1) {
             jedis.persist(_key); //持续存在
         }
+
+        //-2:过期或已删
     }
 
 

@@ -25,7 +25,7 @@ public class RedisQueue {
      * 添加
      */
     public void add(String item) {
-        client.open(s -> s.key(queueName).persist().listAdd(item));
+        client.open(s -> s.key(queueName).listAdd(item));
     }
 
 
@@ -34,7 +34,7 @@ public class RedisQueue {
      */
     public void addAll(Collection<String> items) {
         client.open(s -> {
-            s.key(queueName).persist().listAddRange(items);
+            s.key(queueName).listAddRange(items);
         });
     }
 

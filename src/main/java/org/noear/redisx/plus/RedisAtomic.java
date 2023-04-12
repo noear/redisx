@@ -28,27 +28,27 @@ public class RedisAtomic {
      * 原子增量
      */
     public long increment() {
-        return client.openAndGet(s -> s.key(atomicName).persist().incr());
+        return client.openAndGet(s -> s.key(atomicName).incr());
     }
 
     /**
      * 原子增量
      */
     public long incrementBy(long num) {
-        return client.openAndGet(s -> s.key(atomicName).persist().incr(num));
+        return client.openAndGet(s -> s.key(atomicName).incr(num));
     }
 
     /**
      * 原子减量
      */
     public long decrement() {
-        return client.openAndGet(s -> s.key(atomicName).persist().decr());
+        return client.openAndGet(s -> s.key(atomicName).decr());
     }
 
     /**
      * 原子减量
      */
     public long decrementBy(long num) {
-        return client.openAndGet(s -> s.key(atomicName).persist().incr(-num));
+        return client.openAndGet(s -> s.key(atomicName).incr(-num));
     }
 }

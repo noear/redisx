@@ -21,7 +21,7 @@ public class RedisId {
      * 生成
      */
     public long generate() {
-        return client.openAndGet((s) -> s.key(idName).persist().incr());
+        return client.openAndGet((s) -> s.key(idName).incr());
     }
 
     /**

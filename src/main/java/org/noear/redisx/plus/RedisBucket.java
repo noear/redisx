@@ -31,10 +31,10 @@ public class RedisBucket {
     }
 
     /**
-     * 永久存储
+     * 存储（不设置时间）
      */
     public void store(String key, String val) {
-        client.open(s -> s.key(key).persist().set(val));
+        client.open(s -> s.key(key).set(val));
     }
 
     /**
@@ -49,14 +49,14 @@ public class RedisBucket {
     }
 
     /**
-     * 永久存储并序列化
+     * 存储并序列化（不设置时间）
      */
     public void storeAndSerialize(String key, Object obj) {
         AssertUtil.notNull(obj, "redis value cannot be null");
 
         String val = client.serializer().encode(obj);
 
-        client.open(s -> s.key(key).persist().set(val));
+        client.open(s -> s.key(key).set(val));
     }
 
     /**

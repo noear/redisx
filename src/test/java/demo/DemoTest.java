@@ -233,6 +233,13 @@ public class DemoTest {
         });
     }
 
+    @Test
+    public void test_ttl(){
+        RedisBucket bucket = client.getBucket();
+        bucket.store("test:v1", "1", 20);
+        bucket.store("test:v1", "2");
+    }
+
 //    @Test
     public void test_bus() {
         //--- bus 使用

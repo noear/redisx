@@ -25,28 +25,28 @@ public class RedisAtomic {
     }
 
     /**
-     * 原子增量
+     * 原子增量（不设置时间，即为永久）
      */
     public long increment() {
         return client.openAndGet(s -> s.key(atomicName).incr());
     }
 
     /**
-     * 原子增量
+     * 原子增量（不设置时间，即为永久）
      */
     public long incrementBy(long num) {
         return client.openAndGet(s -> s.key(atomicName).incr(num));
     }
 
     /**
-     * 原子减量
+     * 原子减量（不设置时间，即为永久）
      */
     public long decrement() {
         return client.openAndGet(s -> s.key(atomicName).decr());
     }
 
     /**
-     * 原子减量
+     * 原子减量（不设置时间，即为永久）
      */
     public long decrementBy(long num) {
         return client.openAndGet(s -> s.key(atomicName).incr(-num));

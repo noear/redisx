@@ -31,7 +31,7 @@ public class RedisBucket {
     }
 
     /**
-     * 存储（不设置时间）
+     * 存储（不设置时间，即为永久）
      */
     public void store(String key, String val) {
         client.open(s -> s.key(key).set(val));
@@ -49,7 +49,7 @@ public class RedisBucket {
     }
 
     /**
-     * 存储并序列化（不设置时间）
+     * 存储并序列化（不设置时间，即为永久）
      */
     public void storeAndSerialize(String key, Object obj) {
         AssertUtil.notNull(obj, "redis value cannot be null");

@@ -18,7 +18,7 @@ public class RedisId {
     }
 
     /**
-     * 生成
+     * 生成（不设置时间，即为永久）
      */
     public long generate() {
         return client.openAndGet((s) -> s.key(idName).incr());

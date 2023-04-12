@@ -22,7 +22,7 @@ public class RedisQueue {
 
 
     /**
-     * 添加
+     * 添加（不设置时间，即为永久）
      */
     public void add(String item) {
         client.open(s -> s.key(queueName).listAdd(item));

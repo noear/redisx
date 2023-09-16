@@ -47,14 +47,24 @@ public class RedisHash implements Map<String,String> {
 
     /**
      * 获取并反序列化
+     *
+     * @deprecated 1.5
      */
+    @Deprecated
     public <T> T getAndDeserialize(String field) {
+        return (T) getAndDeserialize(Object.class, field);
+    }
+
+    /**
+     * 获取并反序列化
+     */
+    public <T> T getAndDeserialize(Class<T> clz, String field) {
         String val = client.openAndGet(s -> s.key(hashName).hashGet(field));
 
         if (val == null) {
             return null;
         } else {
-            return (T) client.serializer().decode(val);
+            return (T) client.serializer().decode(val, clz);
         }
     }
 

@@ -18,7 +18,7 @@ public class SerializerDefault implements Serializer {
     }
 
     @Override
-    public Object decode(String str) {
+    public Object decode(String str, Class<?> clz) {
         byte[] bytes = Base64.getDecoder().decode(str);
         return SerializationUtil.deserialize(bytes);
     }

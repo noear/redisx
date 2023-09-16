@@ -8,5 +8,5 @@ package org.noear.redisx;
  */
 public interface Serializer {
     String encode(Object obj);
-    Object decode(String str);
+    Object decode(String str, Class<?> clz);
 }

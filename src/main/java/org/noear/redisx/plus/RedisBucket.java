@@ -70,20 +70,37 @@ public class RedisBucket {
         return client.openAndGet(s -> s.getMore(keys));
     }
 
+
+    /**
+     * @deprecated 1.5
+     * */
+    @Deprecated
+    public <T> T getAndDeserialize(String key) {
+        return (T)getAndDeserialize( key, Object.class);
+    }
+
     /**
      * 获取并反序列化
      */
-    public <T> T getAndDeserialize(String key) {
+    public <T> T getAndDeserialize(String key, Class<T> clz) {
         String val = get(key);
 
         if (val == null) {
             return null;
         } else {
-            return (T) client.serializer().decode(val);
+            return (T) client.serializer().decode(val, clz);
         }
     }
 
+    /**
+     * @deprecated 1.5
+     * */
+    @Deprecated
     public <T> List<T> getAndDeserializeByKeys(String... keys) {
+        return (List<T>) getAndDeserializeByKeys(Object.class, keys);
+    }
+
+    public <T> List<T> getAndDeserializeByKeys(Class<T> clz, String... keys) {
         List<String> vals = getByKeys(keys);
 
         if (vals == null) {
@@ -91,7 +108,7 @@ public class RedisBucket {
         } else {
             List<T> list = new ArrayList<>();
             for (String val : vals) {
-                list.add((T) client.serializer().decode(val));
+                list.add((T) client.serializer().decode(val, clz));
             }
             return list;
         }
@@ -107,8 +124,23 @@ public class RedisBucket {
         return val;
     }
 
+    /**
+     * @deprecated 1.5
+     * */
+    @Deprecated
     public <T> T getOrStoreAndSerialize(String key, int inSeconds, Supplier<T> supplier) {
-        T val = getAndDeserialize(key);
+        T val = (T)getAndDeserialize(key, Object.class);
+
+        if (val == null) {
+            val = supplier.get();
+            storeAndSerialize(key, val, inSeconds);
+        }
+
+        return val;
+    }
+
+    public <T> T getOrStoreAndSerialize(String key, int inSeconds, Class<T> clz, Supplier<T> supplier) {
+        T val = getAndDeserialize(key, clz);
 
         if (val == null) {
             val = supplier.get();

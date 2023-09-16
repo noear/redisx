@@ -16,7 +16,7 @@ public class SerializerJson implements Serializer {
     }
 
     @Override
-    public Object decode(String str) {
-        return ONode.deserialize(str);
+    public Object decode(String str, Class<?> clz) {
+        return ONode.deserialize(str, clz);
     }
 }

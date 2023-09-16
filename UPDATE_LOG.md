@@ -1,6 +1,6 @@
 
 ### 1.5.0
-* 调整 Serializer 接口
+* 调整 Serializer 接口（增加类型化 decode）
 
 ### 1.4.10
 * jedis 升为 5.0.0

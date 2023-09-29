@@ -66,7 +66,18 @@ public class RedisBucket {
         return client.openAndGet(s -> s.key(key).get());
     }
 
+    /**
+     * @deprecated 1.5
+     * */
+    @Deprecated
     public List<String> getByKeys(String... keys) {
+        return getMore(keys);
+    }
+
+    /**
+     * 获取更多
+     * */
+    public List<String> getMore(String... keys) {
         return client.openAndGet(s -> s.getMore(keys));
     }
 
@@ -100,8 +111,19 @@ public class RedisBucket {
         return (List<T>) getAndDeserializeByKeys(Object.class, keys);
     }
 
+    /**
+     * @deprecated 1.5
+     * */
+    @Deprecated
     public <T> List<T> getAndDeserializeByKeys(Class<T> clz, String... keys) {
-        List<String> vals = getByKeys(keys);
+        return getMoreAndDeserialize(clz, keys);
+    }
+
+    /**
+     * 获取更多并反序列化
+     * */
+    public <T> List<T> getMoreAndDeserialize(Class<T> clz, String... keys) {
+        List<String> vals = getMore(keys);
 
         if (vals == null) {
             return null;
@@ -114,6 +136,9 @@ public class RedisBucket {
         }
     }
 
+    /**
+     * 获取或存储
+     * */
     public String getOrStore(String key, int inSeconds, Supplier<String> supplier) {
         String val = get(key);
         if (val == null) {
@@ -139,6 +164,9 @@ public class RedisBucket {
         return val;
     }
 
+    /**
+     * 获取或存储并序列化
+     * */
     public <T> T getOrStoreAndSerialize(String key, int inSeconds, Class<T> clz, Supplier<T> supplier) {
         T val = getAndDeserialize(key, clz);
 
@@ -159,8 +187,17 @@ public class RedisBucket {
 
     /**
      * 检查是多个主键是否存在
+     * @deprecated
      * */
+    @Deprecated
     public Long existsByKeys(Collection<String> keys){
+        return exists(keys);
+    }
+
+    /**
+     * 检查是多个主键是否存在
+     * */
+    public Long exists(Collection<String> keys){
         return client.openAndGet(s -> s.existsKeys(keys));
     }
 
@@ -183,8 +220,18 @@ public class RedisBucket {
 
     /**
      * 移除多个主键
+     *
+     * @deprecated 1.5
      * */
+    @Deprecated
     public Long removeByKeys(Collection<String> keys) {
+        return client.openAndGet(s -> s.deleteKeys(keys));
+    }
+
+    /**
+     * 移除多个主键
+     * */
+    public Long remove(Collection<String> keys) {
         return client.openAndGet(s -> s.deleteKeys(keys));
     }
 
@@ -218,6 +265,5 @@ public class RedisBucket {
     public Set<String> keys(String pattern) {
         return client.openAndGet(s -> s.keys(pattern));
     }
-
 
 }

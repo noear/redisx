@@ -67,16 +67,10 @@ public class RedisBucket {
     }
 
     /**
-     * @deprecated 1.5
-     * */
-    @Deprecated
-    public List<String> getByKeys(String... keys) {
-        return getMore(keys);
-    }
-
-    /**
      * 获取更多
-     * */
+     *
+     * @since 1.6
+     */
     public List<String> getMore(String... keys) {
         return client.openAndGet(s -> s.getMore(keys));
     }
@@ -92,6 +86,8 @@ public class RedisBucket {
 
     /**
      * 获取并反序列化
+     *
+     * @since 1.5
      */
     public <T> T getAndDeserialize(String key, Class<T> clz) {
         String val = get(key);
@@ -104,24 +100,21 @@ public class RedisBucket {
     }
 
     /**
-     * @deprecated 1.5
-     * */
+     * 获取更多并反序列化
+     *
+     * @since 1.6
+     * @deprecated 1.6
+     */
     @Deprecated
-    public <T> List<T> getAndDeserializeByKeys(String... keys) {
-        return (List<T>) getAndDeserializeByKeys(Object.class, keys);
-    }
-
-    /**
-     * @deprecated 1.5
-     * */
-    @Deprecated
-    public <T> List<T> getAndDeserializeByKeys(Class<T> clz, String... keys) {
-        return getMoreAndDeserialize(clz, keys);
+    public <T> List<T> getMoreAndDeserialize(String... keys) {
+        return (List<T>) getMoreAndDeserialize(Object.class, keys);
     }
 
     /**
      * 获取更多并反序列化
-     * */
+     *
+     * @since 1.6
+     */
     public <T> List<T> getMoreAndDeserialize(Class<T> clz, String... keys) {
         List<String> vals = getMore(keys);
 
@@ -138,7 +131,7 @@ public class RedisBucket {
 
     /**
      * 获取或存储
-     * */
+     */
     public String getOrStore(String key, int inSeconds, Supplier<String> supplier) {
         String val = get(key);
         if (val == null) {
@@ -166,7 +159,9 @@ public class RedisBucket {
 
     /**
      * 获取或存储并序列化
-     * */
+     *
+     * @since 1.5
+     */
     public <T> T getOrStoreAndSerialize(String key, int inSeconds, Class<T> clz, Supplier<T> supplier) {
         T val = getAndDeserialize(key, clz);
 
@@ -180,30 +175,23 @@ public class RedisBucket {
 
     /**
      * 检查是否存在
-     * */
-    public Boolean exists(String key){
+     */
+    public Boolean exists(String key) {
         return client.openAndGet(s -> s.key(key).exists());
     }
 
     /**
      * 检查是多个主键是否存在
-     * @deprecated
-     * */
-    @Deprecated
-    public Long existsByKeys(Collection<String> keys){
-        return exists(keys);
-    }
-
-    /**
-     * 检查是多个主键是否存在
-     * */
-    public Long exists(Collection<String> keys){
+     *
+     * @since 1.6
+     */
+    public Long exists(Collection<String> keys) {
         return client.openAndGet(s -> s.existsKeys(keys));
     }
 
     /**
      * 检查一批匹配模式的主键是否存在
-     * */
+     */
     public Long existsByPattern(String pattern) {
         return client.openAndGet(s -> {
             Set<String> keys = s.keys(pattern);
@@ -221,23 +209,15 @@ public class RedisBucket {
     /**
      * 移除多个主键
      *
-     * @deprecated 1.5
-     * */
-    @Deprecated
-    public Long removeByKeys(Collection<String> keys) {
-        return client.openAndGet(s -> s.deleteKeys(keys));
-    }
-
-    /**
-     * 移除多个主键
-     * */
+     * @since 1.6
+     */
     public Long remove(Collection<String> keys) {
         return client.openAndGet(s -> s.deleteKeys(keys));
     }
 
     /**
      * 移除一批匹配模式的主键
-     * */
+     */
     public Long removeByPattern(String pattern) {
         return client.openAndGet(s -> {
             Set<String> keys = s.keys(pattern);

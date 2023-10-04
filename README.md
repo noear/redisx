@@ -162,7 +162,7 @@ public class DemoTest {
 
         UserDo userDo2 = bucket.getOrStoreAndSerialize("userex:1212", 2, () -> userDo);
 
-        UserDo userDo3 =bucket.getAndDeserialize("userex:1212");
+        UserDo userDo3 =bucket.getAndDeserialize("userex:1212", UserDo.class);
 
         assert userDo2 != null;
         assert userDo3 != null;
@@ -203,7 +203,7 @@ public class DemoTest {
 
         assert redisHash.getAsInt("id") == 1;
 
-        OrderDo orderDo1 = redisHash.getAndDeserialize("order");
+        OrderDo orderDo1 = redisHash.getAndDeserialize("order", OrderDo.class);
         assert orderDo1.id == orderDo.id;
 
         assert redisHash.size() == 3;

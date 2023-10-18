@@ -1,4 +1,7 @@
 
+### 1.6.1
+* SerializerJson 默认改成 stringify 方案 
+
 ### 1.6.0
 * 移除一批弃用函数
 

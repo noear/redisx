@@ -12,7 +12,7 @@ import org.noear.snack.ONode;
 public class SerializerJson implements Serializer {
     @Override
     public String encode(Object obj) {
-        return ONode.serialize(obj);
+        return ONode.stringify(obj);
     }
 
     @Override

@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>redisx</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.0.0</version>
+            <version>5.0.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>snack3</artifactId>
-            <version>3.2.80</version>
+            <version>3.2.82</version>
             <scope>provided</scope>
         </dependency>
 

@@ -1,3 +1,8 @@
+### 1.6.2
+* snack3 升为 3.2.82
+* jedis 升为 5.0.2
+* 调整 SerializerJson 改回 带类型方案
+* 添加 SerializerJsonNoType 不带类型 （补允 SerializerJson）
 
 ### 1.6.1
 * SerializerJson 默认改成 stringify 方案 

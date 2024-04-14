@@ -3,6 +3,7 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 /**
@@ -32,13 +33,20 @@ public class RedisBus {
         });
     }
 
-    public Thread subscribeInThread(BiConsumer<String, String> consumer, String... topics) {
+    public CompletableFuture<Thread> subscribeFuture(BiConsumer<String, String> consumer, String... topics) {
+        CompletableFuture<Thread> future = new CompletableFuture();
+
         Thread thread = new Thread(() -> {
-            subscribe(consumer, topics);
+            try {
+                subscribe(consumer, topics);
+                future.complete(Thread.currentThread());
+            } catch (Throwable e) {
+                future.completeExceptionally(e);
+            }
         });
         thread.start();
 
-        return thread;
+        return future;
     }
 
     /**

@@ -11,6 +11,7 @@ import redis.clients.jedis.resps.GeoRadiusResponse;
 import redis.clients.jedis.resps.Tuple;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis 会话
@@ -37,7 +38,7 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     private String _key;
-    private long _seconds;
+    private long _milliseconds;
 
     /**
      * 获取jedis原始对象
@@ -90,7 +91,21 @@ public class RedisSessionImpl implements RedisSession {
      */
     @Override
     public RedisSessionImpl expire(int seconds) {
-        _seconds = seconds;
+        if (seconds == -1) {
+            _milliseconds = -1;
+        } else {
+            _milliseconds = TimeUnit.SECONDS.toMillis(seconds);
+        }
+        return this;
+    }
+
+    @Override
+    public RedisSessionImpl expire(long time, TimeUnit unit) {
+        if (time == -1) {
+            _milliseconds = -1;
+        } else {
+            _milliseconds = unit.toMillis(time);
+        }
         return this;
     }
 
@@ -99,18 +114,18 @@ public class RedisSessionImpl implements RedisSession {
      */
     @Override
     public RedisSessionImpl persist() {
-        _seconds = -1;
+        _milliseconds = -1;
         return this;
     }
 
     private void expirePush() {
         //+x: 具体时间
-        if (_seconds > 0) {
-            jedis.expire(_key, _seconds);
+        if (_milliseconds > 0) {
+            jedis.pexpire(_key, _milliseconds);
         }
 
         //-1: 永久
-        if (_seconds == -1) {
+        if (_milliseconds == -1) {
             jedis.persist(_key); //持续存在
         }
 
@@ -131,7 +146,13 @@ public class RedisSessionImpl implements RedisSession {
      */
     @Override
     public void delay(int seconds) {
-        _seconds = seconds;
+        expire(seconds);
+        expirePush();
+    }
+
+    @Override
+    public void delay(long time, TimeUnit unit) {
+        expire(time, unit);
         expirePush();
     }
 
@@ -214,8 +235,8 @@ public class RedisSessionImpl implements RedisSession {
     public RedisSessionImpl set(String val) {
         AssertUtil.notNull(val, "redis value cannot be null");
 
-        if (_seconds > 0) {
-            jedis.setex(_key, _seconds, val);
+        if (_milliseconds > 0) {
+            jedis.psetex(_key, _milliseconds, val);
         } else {
             jedis.set(_key, val);
         }
@@ -310,7 +331,7 @@ public class RedisSessionImpl implements RedisSession {
          * PX: SET_WITH_EXPIRE_TIME for millisecond
          * */
 
-        SetParams options = new SetParams().nx().ex(_seconds);
+        SetParams options = new SetParams().nx().px(_milliseconds);
         String rst = jedis.set(_key, val, options); //设置成功，返回 1 。//设置失败，返回 0 。
 
         return LOCK_SUCCEED.equals(rst);//成功获得锁

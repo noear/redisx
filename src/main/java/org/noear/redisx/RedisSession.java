@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public interface RedisSession extends AutoCloseable {
     /**
@@ -45,6 +46,14 @@ public interface RedisSession extends AutoCloseable {
     RedisSession expire(int seconds);
 
     /**
+     * 设置超时（一般跟在 key 后面）
+     *
+     * @param time 时间（-1永不过期）
+     * @param unit 单位
+     */
+    RedisSession expire(long time, TimeUnit unit);
+
+    /**
      * 设置为持续存在（即不超时）
      */
     RedisSession persist();
@@ -58,6 +67,14 @@ public interface RedisSession extends AutoCloseable {
      * 尝试延期
      */
     void delay(int seconds);
+
+    /**
+     * 尝试延期
+     *
+     * @param time 时间（-1永不过期）
+     * @param unit 单位
+     */
+    void delay(long time, TimeUnit unit);
 
     /**
      * 主键扫描

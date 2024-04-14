@@ -2,6 +2,8 @@ package org.noear.redisx.plus;
 
 import org.noear.redisx.RedisClient;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Redis 分布式锁
  *
@@ -27,11 +29,32 @@ public class RedisLock {
     /**
      * 尝试锁
      *
+     * @param time     锁定时间
+     * @param timeUnit 时间单位
+     * @param holder   持有人
+     */
+    public boolean tryLock(long time, TimeUnit timeUnit, String holder) {
+        return client.openAndGet((s) -> s.key(lockName).expire(time, timeUnit).lock(holder));
+    }
+
+    /**
+     * 尝试锁
+     *
      * @param inSeconds 锁定时间
      * @param holder    持有人
      */
     public boolean tryLock(int inSeconds, String holder) {
-        return client.openAndGet((s) -> s.key(lockName).expire(inSeconds).lock(holder));
+        return tryLock(inSeconds, TimeUnit.SECONDS, holder);
+    }
+
+    /**
+     * 尝试锁
+     *
+     * @param time     锁定时间
+     * @param timeUnit 时间单位
+     */
+    public boolean tryLock(long time, TimeUnit timeUnit) {
+        return tryLock(time, timeUnit, "_");
     }
 
     /**
@@ -49,7 +72,6 @@ public class RedisLock {
     public boolean tryLock() {
         return tryLock(3);
     }
-
 
 
     /**
@@ -80,7 +102,7 @@ public class RedisLock {
     /**
      * 获取剩余时间
      */
-    public long ttl(){
+    public long ttl() {
         return client.openAndGet((s) -> s.key(lockName).ttl());
     }
 }

@@ -13,6 +13,8 @@ import org.noear.solon.test.SolonTest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author noear 2021/10/12 created
@@ -85,7 +87,7 @@ public class DemoTest {
 
         UserDo userDo2 = bucket.getOrStoreAndSerialize("userex:1212", 2, UserDo.class, () -> userDo);
 
-        UserDo userDo3 =bucket.getAndDeserialize("userex:1212", UserDo.class);
+        UserDo userDo3 = bucket.getAndDeserialize("userex:1212", UserDo.class);
 
         assert userDo2 != null;
         assert userDo3 != null;
@@ -125,7 +127,7 @@ public class DemoTest {
         //--- hash 使用
         RedisHash redisHash = client.getHash("user:112");
 
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("id", "1");
         map.put("name", "demo");
 
@@ -233,26 +235,30 @@ public class DemoTest {
         });
     }
 
-//    @Test
-    public void test_bus() {
+    @Test
+    public void test_bus() throws Exception {
+        int count = 10;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+
         //--- bus 使用
         RedisBus bus = client.getBus();
 
         //发消息 （如果没有订阅者，好像消息会白发）
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(100);
-                    bus.publish("topic:test", "event-" + System.currentTimeMillis());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
 
         //订阅消息（这个函数会卡住线程）
-        bus.subscribe((topic, message) -> {
+        bus.subscribeFuture((topic, message) -> {
             System.out.println(topic + " = " + message);
+            countDownLatch.countDown();
         }, "topic:test");
+
+        Thread.sleep(100);
+
+        for (int i = 0; i < count; i++) {
+            bus.publish("topic:test", "event-" + System.currentTimeMillis());
+        }
+
+        countDownLatch.await(2, TimeUnit.SECONDS);
+
+        assert countDownLatch.getCount() == 0;
     }
 }

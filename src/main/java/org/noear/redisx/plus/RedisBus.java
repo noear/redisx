@@ -32,6 +32,15 @@ public class RedisBus {
         });
     }
 
+    public Thread subscribeInThread(BiConsumer<String, String> consumer, String... topics) {
+        Thread thread = new Thread(() -> {
+            subscribe(consumer, topics);
+        });
+        thread.start();
+
+        return thread;
+    }
+
     /**
      * 发布
      */

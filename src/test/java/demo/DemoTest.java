@@ -2,12 +2,10 @@ package demo;
 
 import demo.model.OrderDo;
 import demo.model.UserDo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.noear.redisx.plus.*;
 import org.noear.solon.annotation.Inject;
 import org.noear.redisx.RedisClient;
-import org.noear.solon.test.SolonJUnit4ClassRunner;
 import org.noear.solon.test.SolonTest;
 
 import java.util.Date;
@@ -19,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author noear 2021/10/12 created
  */
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject

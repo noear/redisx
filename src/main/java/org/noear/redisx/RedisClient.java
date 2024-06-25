@@ -5,6 +5,7 @@ import org.noear.redisx.utils.SerializerDefault;
 import org.noear.redisx.utils.TextUtil;
 import redis.clients.jedis.*;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Properties;
@@ -172,8 +173,13 @@ public class RedisClient implements AutoCloseable {
     }
 
     private HostAndPort parseAddr(String addr) {
-        String[] hp = addr.split(":");
-        return new HostAndPort(hp[0], Integer.parseInt(hp[1]));
+        if (addr.contains("://")) {
+            URI uri = URI.create(addr);
+            return new HostAndPort(uri.getHost(), uri.getPort());
+        } else {
+            String[] hp = addr.split(":");
+            return new HostAndPort(hp[0], Integer.parseInt(hp[1]));
+        }
     }
 
     @Deprecated

@@ -1,5 +1,5 @@
 test.rd1:
-  server: "localhost:6379"
+  server: "redis://localhost:6379"
   password: 123456
   db: 1
   serializer: "org.noear.redisx.utils.SerializerJson"

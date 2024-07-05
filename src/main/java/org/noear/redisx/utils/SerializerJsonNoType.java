@@ -3,6 +3,8 @@ package org.noear.redisx.utils;
 import org.noear.redisx.Serializer;
 import org.noear.snack.ONode;
 
+import java.lang.reflect.Type;
+
 /**
  * 序列化接口 Json 实现，不带类型（json 不能还原所有的类型，有一定局限制）
  *
@@ -16,7 +18,7 @@ public class SerializerJsonNoType implements Serializer {
     }
 
     @Override
-    public Object decode(String str, Class<?> clz) {
-        return ONode.deserialize(str, clz);
+    public Object decode(String str, Type type) {
+        return ONode.deserialize(str, type);
     }
 }

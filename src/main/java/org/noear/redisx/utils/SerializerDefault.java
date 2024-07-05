@@ -2,6 +2,7 @@ package org.noear.redisx.utils;
 
 import org.noear.redisx.Serializer;
 
+import java.lang.reflect.Type;
 import java.util.Base64;
 
 /**
@@ -18,7 +19,7 @@ public class SerializerDefault implements Serializer {
     }
 
     @Override
-    public Object decode(String str, Class<?> clz) {
+    public Object decode(String str, Type type) {
         byte[] bytes = Base64.getDecoder().decode(str);
         return SerializationUtil.deserialize(bytes);
     }

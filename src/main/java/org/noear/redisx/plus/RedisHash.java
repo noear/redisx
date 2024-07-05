@@ -4,6 +4,7 @@ import org.noear.redisx.RedisClient;
 import org.noear.redisx.utils.AssertUtil;
 import org.noear.redisx.utils.TextUtil;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -59,12 +60,21 @@ public class RedisHash implements Map<String,String> {
      * 获取并反序列化
      */
     public <T> T getAndDeserialize(String field, Class<T> clz) {
+        return getAndDeserialize(field, (Type) clz);
+    }
+
+    /**
+     * 获取并反序列化
+     *
+     * @since 1.6
+     */
+    public <T> T getAndDeserialize(String field, Type type) {
         String val = client.openAndGet(s -> s.key(hashName).hashGet(field));
 
         if (val == null) {
             return null;
         } else {
-            return (T) client.serializer().decode(val, clz);
+            return (T) client.serializer().decode(val, type);
         }
     }
 
@@ -165,7 +175,7 @@ public class RedisHash implements Map<String,String> {
 
     /**
      * 延时
-     * */
+     */
     public void delay(int seconds) {
         client.open(s -> s.key(hashName).delay(seconds));
     }

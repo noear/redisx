@@ -3,6 +3,7 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 import org.noear.redisx.utils.AssertUtil;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -78,10 +79,10 @@ public class RedisBucket {
 
     /**
      * @deprecated 1.5
-     * */
+     */
     @Deprecated
     public <T> T getAndDeserialize(String key) {
-        return (T)getAndDeserialize( key, Object.class);
+        return (T) getAndDeserialize(key, Object.class);
     }
 
     /**
@@ -90,12 +91,21 @@ public class RedisBucket {
      * @since 1.5
      */
     public <T> T getAndDeserialize(String key, Class<T> clz) {
+        return getAndDeserialize(key, (Type) clz);
+    }
+
+    /**
+     * 获取并反序列化
+     *
+     * @since 1.5
+     */
+    public <T> T getAndDeserialize(String key, Type type) {
         String val = get(key);
 
         if (val == null) {
             return null;
         } else {
-            return (T) client.serializer().decode(val, clz);
+            return (T) client.serializer().decode(val, type);
         }
     }
 
@@ -116,6 +126,15 @@ public class RedisBucket {
      * @since 1.6
      */
     public <T> List<T> getMoreAndDeserialize(Class<T> clz, String... keys) {
+        return getMoreAndDeserialize((Type) clz, keys);
+    }
+
+    /**
+     * 获取更多并反序列化
+     *
+     * @since 1.6
+     */
+    public <T> List<T> getMoreAndDeserialize(Type type, String... keys) {
         List<String> vals = getMore(keys);
 
         if (vals == null) {
@@ -123,7 +142,7 @@ public class RedisBucket {
         } else {
             List<T> list = new ArrayList<>();
             for (String val : vals) {
-                list.add((T) client.serializer().decode(val, clz));
+                list.add((T) client.serializer().decode(val, type));
             }
             return list;
         }
@@ -144,10 +163,10 @@ public class RedisBucket {
 
     /**
      * @deprecated 1.5
-     * */
+     */
     @Deprecated
     public <T> T getOrStoreAndSerialize(String key, int inSeconds, Supplier<T> supplier) {
-        T val = (T)getAndDeserialize(key, Object.class);
+        T val = (T) getAndDeserialize(key, Object.class);
 
         if (val == null) {
             val = supplier.get();
@@ -245,5 +264,4 @@ public class RedisBucket {
     public Set<String> keys(String pattern) {
         return client.openAndGet(s -> s.keys(pattern));
     }
-
 }

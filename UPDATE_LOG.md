@@ -1,3 +1,14 @@
+### 1.6.5
+* 优化 序列化对泛型的支持
+
+### 1.6.4
+* 添加 redis://localhost:6379 地址支持
+
+### 1.6.3
+* 添加 subscribeInThread
+* 添加 新的时间结合 long time, TimeUnit timeUnit
+* 添加 subscribeFuture
+
 ### 1.6.2
 * snack3 升为 3.2.82
 * jedis 升为 5.0.2

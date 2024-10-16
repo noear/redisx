@@ -26,11 +26,12 @@ public class RedisClient implements AutoCloseable {
     private UnifiedJedis unifiedJedis;
     private Serializer serializer = new SerializerDefault();
 
-    public Serializer serializer(){
+    public Serializer serializer() {
         return serializer;
     }
-    public void serializer(Serializer serializer){
-        if(serializer != null){
+
+    public void serializer(Serializer serializer) {
+        if (serializer != null) {
             this.serializer = serializer;
         }
     }
@@ -55,11 +56,11 @@ public class RedisClient implements AutoCloseable {
 
     private void initDo(Properties prop, int db, int maxTotal) {
         String serializerStr = prop.getProperty("serializer");
-        if(TextUtil.isEmpty(serializerStr) == false) {
+        if (TextUtil.isEmpty(serializerStr) == false) {
             prop.remove("serializer");
             try {
-                Class<?> serializerClz =  Class.forName(serializerStr);
-                Serializer serializerNew = (Serializer)serializerClz.getDeclaredConstructor().newInstance();
+                Class<?> serializerClz = Class.forName(serializerStr);
+                Serializer serializerNew = (Serializer) serializerClz.getDeclaredConstructor().newInstance();
                 serializer(serializerNew);
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -235,6 +236,13 @@ public class RedisClient implements AutoCloseable {
      */
     public RedisAtomic getAtomic(String atomicName) {
         return new RedisAtomic(this, atomicName);
+    }
+
+    /**
+     * 获取一个原子数
+     */
+    public RedisAtomic getAtomic(String atomicName, int inSeconds) {
+        return new RedisAtomic(this, atomicName, inSeconds);
     }
 
 

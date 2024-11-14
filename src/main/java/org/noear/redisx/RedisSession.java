@@ -200,14 +200,14 @@ public interface RedisSession extends AutoCloseable {
     RedisSession hashSetAll(Map<? extends String, ? extends String> map);
 
     /**
-     * 哈希字段设置（如果字段不存在）
+     * 哈希字段初始化（如果字段不存在）
      */
-    boolean hashSetNx(String field, String val);
+    boolean hashInit(String field, String val);
 
     /**
-     * 哈希字段设置（如果字段不存在）
+     * 哈希字段初始化（如果字段不存在）
      */
-    boolean hashSetNx(String field, long val);
+    boolean hashInit(String field, long val);
 
     /**
      * 哈希字段增量操作

@@ -425,7 +425,10 @@ public class RedisSessionImpl implements RedisSession {
      */
     @Override
     public boolean hashInit(String field, String val) {
-        return jedis.hsetnx(_key, field, val) > 0;
+        boolean tmp = jedis.hsetnx(_key, field, val) > 0;
+        expirePush();
+
+        return tmp;
     }
 
     /**

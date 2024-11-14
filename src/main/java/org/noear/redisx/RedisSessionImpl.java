@@ -420,6 +420,22 @@ public class RedisSessionImpl implements RedisSession {
         return this;
     }
 
+    /**
+     * 哈希字段设置（如果字段不存在）
+     */
+    @Override
+    public boolean hashSetNx(String field, String val) {
+        return jedis.hsetnx(_key, field, val) > 0;
+    }
+
+    /**
+     * 哈希字段设置（如果字段不存在）
+     */
+    @Override
+    public boolean hashSetNx(String field, long val) {
+        return hashSetNx(field, String.valueOf(val));
+    }
+
 
     /**
      * 哈希字段增量操作

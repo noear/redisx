@@ -1,3 +1,10 @@
+### 1.6.8
+* 添加 RedisSession:hashInit 方法
+
+### 1.6.7
+
+* 添加 RedisAtomic 超时支持
+
 ### 1.6.6
 * redis.clients 升为 5.1.5
 * snack3 升为 3.2.111

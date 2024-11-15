@@ -1,5 +1,6 @@
 ### 1.6.8
 * 添加 RedisSession:hashInit 方法
+* snack3 升为 3.2.121
 
 ### 1.6.7
 

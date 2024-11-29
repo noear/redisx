@@ -3,6 +3,7 @@ package demo;
 import demo.model.OrderDo;
 import demo.model.UserDo;
 import org.junit.jupiter.api.Test;
+import org.noear.redisx.RedisSession;
 import org.noear.redisx.plus.*;
 import org.noear.solon.annotation.Inject;
 import org.noear.redisx.RedisClient;
@@ -25,27 +26,32 @@ public class DemoTest {
     @Test
     public void test() {
         //写操作:: key().expire().xxx()
-        client.open(session -> {
-            session.key("order:1").expire(10).set("hello");
-        });
+        RedisSession session = client.openSession();
+        session.key("order:1").expire(10).set("hello");
 
         //读操作:: key().xxx();
-        String item_1 = client.openAndGet(session -> session.key("order:1").get());
+        String item_1 = session.key("order:1").get();
         assert item_1 != null;
 
         //写操作:: key().expire().xxx()
-        client.open(session -> {
-            session.key("user:1").expire(10)
-                    .hashSet("name", "noear")
-                    .hashSet("sex", "1");
-        });
+        session.key("user:1").expire(10)
+                .hashSet("name", "noear")
+                .hashSet("sex", "1");
 
         //延时操作:: key().delay()
-        client.open(session -> {
-            session.key("user_link:1").delay(10);
-        });
+        session.key("user_link:1").delay(10);
+
+        assert "1".equals(session.key("user:1").hashGet("sex"));
 
         assert true;
+
+        session.key("user:2").hashInit("sex", "1");
+        System.out.println(session.key("user:2").hashGet("sex"));
+        assert "1".equals(session.key("user:2").hashGet("sex"));
+
+        session.key("user:2").hashInit("sex", "2");
+        System.out.println(session.key("user:2").hashGet("sex"));
+        assert "1".equals(session.key("user:2").hashGet("sex"));
     }
 
     @Test

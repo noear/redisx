@@ -248,11 +248,39 @@ public class RedisSessionImpl implements RedisSession {
      * 设置主键对应的值
      */
     @Override
-    public RedisSessionImpl set(long val) {
+    public RedisSession set(long val) {
         return set(String.valueOf(val));
     }
 
+    /**
+     * 设置主键对应的值（如果不存在key）
+     */
+    @Override
+    public RedisSession setIfAbsent(String val) {
+        /**
+         * NX: IF_NOT_EXIST（只在键不存在时，才对键进行设置操作）
+         * XX: IF_EXIST（只在键已经存在时，才对键进行设置操作）
+         *
+         * EX: SET_WITH_EXPIRE_TIME for second
+         * PX: SET_WITH_EXPIRE_TIME for millisecond
+         * */
 
+        AssertUtil.notNull(val, "redis value cannot be null");
+
+        SetParams options = new SetParams().nx();
+        if (_milliseconds > 0) {
+            options.px(_milliseconds);
+        }
+
+        jedis.set(_key, val, options);
+
+        return this;
+    }
+
+    @Override
+    public RedisSession setIfAbsent(long val) {
+        return setIfAbsent(String.valueOf(val));
+    }
 
     /**
      * 获取主键对应的值
@@ -330,7 +358,6 @@ public class RedisSessionImpl implements RedisSession {
          * EX: SET_WITH_EXPIRE_TIME for second
          * PX: SET_WITH_EXPIRE_TIME for millisecond
          * */
-
         SetParams options = new SetParams().nx().px(_milliseconds);
         String rst = jedis.set(_key, val, options); //设置成功，返回 1 。//设置失败，返回 0 。
 

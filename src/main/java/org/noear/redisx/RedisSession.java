@@ -126,6 +126,16 @@ public interface RedisSession extends AutoCloseable {
     RedisSession set(long val);
 
     /**
+     * 设置主键对应的值（如果不存在key）
+     */
+    RedisSession setIfAbsent(String val);
+
+    /**
+     * 设置主键对应的值（如果不存在key）
+     */
+    RedisSession setIfAbsent(long val);
+
+    /**
      * 获取主键对应的值
      */
     String get();

@@ -1,3 +1,6 @@
+### 1.6.9
+* 添加 RedisBus:psubscribe 方法
+
 ### 1.6.8
 * 添加 RedisSession:hashInit 方法
 * snack3 升为 3.2.121

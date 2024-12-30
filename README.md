@@ -175,6 +175,15 @@ public class DemoTest {
         bucket.removeByPattern("item:");
     }
 }
+
+//实体要实现 Serializable 接口
+public class UserDo implements Serializable {
+    public long id;
+    public String name;
+    public double create_lng;
+    public double create_lat;
+    public Date create_time;
+}
 ```
 
 
@@ -208,6 +217,13 @@ public class DemoTest {
 
         assert redisHash.size() == 3;
     }
+}
+
+//实体要实现 Serializable 接口
+public class OrderDo implements Serializable {
+    public int id;
+    public String traceId;
+    public String note;
 }
 ```
 

@@ -30,7 +30,7 @@ public class RedisClient implements AutoCloseable {
         return serializer;
     }
 
-    public UnifiedJedis unifiedJedis(){
+    public UnifiedJedis jedis(){
         return unifiedJedis;
     }
 

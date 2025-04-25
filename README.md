@@ -402,8 +402,8 @@ public class DemoTest {
             }
         }).start();
 
-        //订阅消息（这个函数会卡住线程）
-        bus.subscribe((topic, message) -> {
+        //异步订阅消息
+        bus.subscribeFuture((topic, message) -> {
             System.out.println(topic + " = " + message);
         }, "topic:test");
     }

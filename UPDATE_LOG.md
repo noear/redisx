@@ -1,8 +1,9 @@
-### 1.6.10
-* 添加 RedisClient:unifiedJedis() 方法
+### 1.6.11
+* 添加 RedisClient:jedis() 方法
 
 ### 1.6.9
 * 添加 RedisBus:psubscribe 方法
+* 添加 RedisBus:psubscribeFuture 方法
 
 ### 1.6.8
 * 添加 RedisSession:hashInit 方法

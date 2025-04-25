@@ -80,7 +80,6 @@ public class App {
 ### 3.基础会话接口操作
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -121,7 +120,6 @@ public class DemoTest {
 ### RedisBucket - 存储桶
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -190,7 +188,6 @@ public class UserDo implements Serializable {
 ### RedisHash - 哈希表(兼容标准Map接口)
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -231,7 +228,6 @@ public class OrderDo implements Serializable {
 ### RedisId - Id生成器
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -255,7 +251,6 @@ public class DemoTest {
 ### RedisLock - 分布式锁
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -279,7 +274,6 @@ public class DemoTest {
 ### RedisAtomic - 原子数字
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -303,7 +297,6 @@ public class DemoTest {
 ### RedisList - 列表
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -343,7 +336,6 @@ public class DemoTest {
 ### RedisQueue - 队列
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject
@@ -379,7 +371,6 @@ public class DemoTest {
 ### RedisBus - 总线
 
 ```java
-@RunWith(SolonJUnit4ClassRunner.class)
 @SolonTest(DemoApp.class)
 public class DemoTest {
     @Inject

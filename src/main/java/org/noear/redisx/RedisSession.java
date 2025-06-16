@@ -371,6 +371,13 @@ public interface RedisSession extends AutoCloseable {
     //Bus
     long publish(String channel, String message);
 
+    /**
+     * 订阅
+     * */
     void subscribe(JedisPubSub jedisPubSub, String... channels);
 
+    /**
+     * 模式订阅
+     * */
+    void psubscribe(JedisPubSub jedisPubSub, String... patterns);
 }

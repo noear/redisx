@@ -815,4 +815,8 @@ public class RedisSessionImpl implements RedisSession {
         jedis.subscribe(jedisPubSub, channels);
     }
 
+    @Override
+    public void psubscribe(JedisPubSub jedisPubSub, String... patterns) {
+        jedis.psubscribe(jedisPubSub, patterns);
+    }
 }

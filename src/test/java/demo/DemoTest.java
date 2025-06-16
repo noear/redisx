@@ -262,6 +262,35 @@ public class DemoTest {
 
         countDownLatch.await(2, TimeUnit.SECONDS);
 
+        System.out.println(countDownLatch.getCount());
+        assert countDownLatch.getCount() == 0;
+    }
+
+    @Test
+    public void test_bus_p() throws Exception {
+        int count = 10;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+
+        //--- bus 使用
+        RedisBus bus = client.getBus();
+
+        //发消息 （如果没有订阅者，好像消息会白发）
+
+        //订阅消息（这个函数会卡住线程）
+        bus.psubscribeFuture((topic, message) -> {
+            System.out.println(topic + " = " + message);
+            countDownLatch.countDown();
+        }, "topic2:*");
+
+        Thread.sleep(100);
+
+        for (int i = 0; i < count; i++) {
+            bus.publish("topic2:test", "event-" + System.currentTimeMillis());
+        }
+
+        countDownLatch.await(2, TimeUnit.SECONDS);
+
+        System.out.println(countDownLatch.getCount());
         assert countDownLatch.getCount() == 0;
     }
 }

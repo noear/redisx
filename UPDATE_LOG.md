@@ -1,3 +1,11 @@
+### 1.6.12
+
+* 优化 RedisBus 订阅控制和取消处理
+* 添加 RedisBus:psubscribeFuture(JedisPubSub,..) 方法
+* 添加 RedisSession:psubscribe 方法
+* snack3 升为 3.2.134
+* jedis 升为 6.0.0
+
 ### 1.6.11
 * 添加 RedisClient:jedis() 方法
 

@@ -3,6 +3,7 @@ package org.noear.redisx.plus;
 import org.noear.redisx.RedisClient;
 import redis.clients.jedis.JedisPubSub;
 
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
@@ -25,7 +26,7 @@ public class RedisBus {
     public void subscribe(BiConsumer<String, String> subscriber, String... topics) {
         subscribe(new JedisPubSub() {
             @Override
-            public void onPMessage(String pattern, String channel, String message) {
+            public void onMessage(String channel, String message) {
                 subscriber.accept(channel, message);
             }
         }, topics);
@@ -40,7 +41,7 @@ public class RedisBus {
     public CompletableFuture<Thread> subscribeFuture(BiConsumer<String, String> subscriber, String... topics) {
         return subscribeFuture(new JedisPubSub() {
             @Override
-            public void onPMessage(String pattern, String channel, String message) {
+            public void onMessage(String channel, String message) {
                 subscriber.accept(channel, message);
             }
         }, topics);
@@ -57,6 +58,13 @@ public class RedisBus {
                 future.completeExceptionally(e);
             }
         });
+
+        future.whenComplete((r, e) -> {
+            if (e instanceof CancellationException) {
+                thread.interrupt();
+            }
+        });
+
         thread.start();
 
         return future;
@@ -101,6 +109,13 @@ public class RedisBus {
                 future.completeExceptionally(e);
             }
         });
+
+        future.whenComplete((r, e) -> {
+            if (e instanceof CancellationException) {
+                thread.interrupt();
+            }
+        });
+
         thread.start();
 
         return future;

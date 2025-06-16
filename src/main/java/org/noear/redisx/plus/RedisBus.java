@@ -22,23 +22,36 @@ public class RedisBus {
     /**
      * 订阅
      */
-    public void subscribe(BiConsumer<String, String> consumer, String... topics) {
+    public void subscribe(BiConsumer<String, String> subscriber, String... topics) {
+        subscribe(new JedisPubSub() {
+            @Override
+            public void onPMessage(String pattern, String channel, String message) {
+                subscriber.accept(channel, message);
+            }
+        }, topics);
+    }
+
+    public void subscribe(JedisPubSub subscriber, String... topics) {
         client.open(s -> {
-            s.subscribe(new JedisPubSub() {
-                @Override
-                public void onMessage(String channel, String message) {
-                    consumer.accept(channel, message);
-                }
-            }, topics);
+            s.subscribe(subscriber, topics);
         });
     }
 
-    public CompletableFuture<Thread> subscribeFuture(BiConsumer<String, String> consumer, String... topics) {
+    public CompletableFuture<Thread> subscribeFuture(BiConsumer<String, String> subscriber, String... topics) {
+        return subscribeFuture(new JedisPubSub() {
+            @Override
+            public void onPMessage(String pattern, String channel, String message) {
+                subscriber.accept(channel, message);
+            }
+        }, topics);
+    }
+
+    public CompletableFuture<Thread> subscribeFuture(JedisPubSub subscriber, String... topics) {
         CompletableFuture<Thread> future = new CompletableFuture();
 
         Thread thread = new Thread(() -> {
             try {
-                subscribe(consumer, topics);
+                subscribe(subscriber, topics);
                 future.complete(Thread.currentThread());
             } catch (Throwable e) {
                 future.completeExceptionally(e);
@@ -48,28 +61,41 @@ public class RedisBus {
 
         return future;
     }
-    
+
     /**
      * 根据匹配模式patterns进行订阅
      * 常用于redis事件监听
      */
-    public void psubscribe(BiConsumer<String, String> consumer, String... patterns) {
-		client.open(s -> {
-            s.jedis().psubscribe(new JedisPubSub() {
-                @Override
-                public void onPMessage(String pattern,String channel, String message) {
-                    consumer.accept(channel, message);
-                }
-            }, patterns);
+    public void psubscribe(BiConsumer<String, String> subscriber, String... patterns) {
+        psubscribe(new JedisPubSub() {
+            @Override
+            public void onPMessage(String pattern, String channel, String message) {
+                subscriber.accept(channel, message);
+            }
+        },  patterns);
+    }
+
+    public void psubscribe(JedisPubSub subscriber, String... patterns) {
+        client.open(s -> {
+            s.jedis().psubscribe(subscriber, patterns);
         });
-	}
-	
-	public CompletableFuture<Thread> psubscribeFuture(BiConsumer<String, String> consumer, String... patterns) {
-		CompletableFuture<Thread> future = new CompletableFuture();
+    }
+
+    public CompletableFuture<Thread> psubscribeFuture(BiConsumer<String, String> subscriber, String... patterns) {
+        return psubscribeFuture(new JedisPubSub() {
+            @Override
+            public void onPMessage(String pattern, String channel, String message) {
+                subscriber.accept(channel, message);
+            }
+        }, patterns);
+    }
+
+    public CompletableFuture<Thread> psubscribeFuture(JedisPubSub subscriber, String... patterns) {
+        CompletableFuture<Thread> future = new CompletableFuture();
 
         Thread thread = new Thread(() -> {
             try {
-            	psubscribe(consumer,patterns);
+                psubscribe(subscriber, patterns);
                 future.complete(Thread.currentThread());
             } catch (Throwable e) {
                 future.completeExceptionally(e);
@@ -78,7 +104,7 @@ public class RedisBus {
         thread.start();
 
         return future;
-	}
+    }
 
     /**
      * 发布

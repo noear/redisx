@@ -6,7 +6,7 @@
 
     <groupId>org.noear</groupId>
     <artifactId>redisx</artifactId>
-    <version>1.6.11</version>
+    <version>1.7.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>5.1.5</version>
+            <version>6.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -31,21 +31,21 @@
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>snack3</artifactId>
-            <version>3.2.123</version>
+            <version>3.2.134</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon-logging-simple</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.noear</groupId>
             <artifactId>solon-test</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -131,31 +131,17 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.13</version>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>oss</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <publishingServerId>oss</publishingServerId>
+                            <autoPublish>true</autoPublish>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
-
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>oss</id>
-                    <name>snapshots</name>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-                </snapshotRepository>
-                <repository>
-                    <id>oss</id>
-                    <name>releases</name>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
         </profile>
     </profiles>
 

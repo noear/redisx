@@ -1,4 +1,4 @@
-### 1.6.12
+### 1.7.0
 
 * 优化 RedisBus 订阅控制和取消处理
 * 添加 RedisBus:psubscribeFuture(JedisPubSub,..) 方法

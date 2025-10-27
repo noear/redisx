@@ -1,7 +1,7 @@
 package org.noear.redisx.utils;
 
 import org.noear.redisx.Serializer;
-import org.noear.snack.ONode;
+import org.noear.snack4.ONode;
 
 import java.lang.reflect.Type;
 
@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 public class SerializerJsonNoType implements Serializer {
     @Override
     public String encode(Object obj) {
-        return ONode.stringify(obj);
+        return ONode.serialize(obj);
     }
 
     @Override

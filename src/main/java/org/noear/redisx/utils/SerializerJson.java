@@ -1,7 +1,9 @@
 package org.noear.redisx.utils;
 
 import org.noear.redisx.Serializer;
-import org.noear.snack.ONode;
+import org.noear.snack4.Feature;
+import org.noear.snack4.ONode;
+import org.noear.snack4.Options;
 
 import java.lang.reflect.Type;
 
@@ -12,13 +14,15 @@ import java.lang.reflect.Type;
  * @since 1.4
  */
 public class SerializerJson implements Serializer {
+    private final Options options = Options.of(Feature.Read_AutoType, Feature.Write_ClassName);
+
     @Override
     public String encode(Object obj) {
-        return ONode.serialize(obj);
+        return ONode.serialize(obj, options);
     }
 
     @Override
     public Object decode(String str, Type type) {
-        return ONode.deserialize(str, type);
+        return ONode.deserialize(str, type, options);
     }
 }

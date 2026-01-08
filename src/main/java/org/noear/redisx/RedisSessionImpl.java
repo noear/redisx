@@ -574,6 +574,14 @@ public class RedisSessionImpl implements RedisSession {
         return this;
     }
 
+    @Override
+    public RedisSession listSet(long index, String newValue) {
+        jedis.lset(_key, index, newValue);
+        expirePush();
+
+        return this;
+    }
+
     /**
      * 列表删除项
      * <p>
@@ -646,10 +654,26 @@ public class RedisSessionImpl implements RedisSession {
     }
 
     /**
+     * 列表获取项（先进先出，从right 取）
+     */
+    @Override
+    public String listGet(long index) {
+        return jedis.lindex(_key, index); //从right取
+    }
+
+    /**
      * 列表分页获取项（先进先出，从right取）
      */
     @Override
     public List<String> listGetRange(int start, int end) {
+        return jedis.lrange(_key, start, end);
+    }
+
+    /**
+     * 列表分页获取项（先进先出，从right取）
+     */
+    @Override
+    public List<String> listGetRange(long start, long end) {
         return jedis.lrange(_key, start, end);
     }
 

@@ -271,8 +271,16 @@ public interface RedisSession extends AutoCloseable {
 
     /**
      * 列表设置位置对应的项
+     *
+     * @deprecated 1.8 {@link #listSet(long, String)}
      */
+    @Deprecated
     RedisSession listSet(int index, String newValue);
+
+    /**
+     * 列表设置位置对应的项
+     */
+    RedisSession listSet(long index, String newValue);
 
     /**
      * 列表删除项
@@ -307,13 +315,29 @@ public interface RedisSession extends AutoCloseable {
 
     /**
      * 列表获取项（先进先出，从right 取）
+     *
+     * @deprecated 1.8 {@link #listGet(long)}
      */
+    @Deprecated
     String listGet(int index);
+
+    /**
+     * 列表获取项（先进先出，从right 取）
+     */
+    String listGet(long index);
+
+    /**
+     * 列表分页获取项（先进先出，从right取）
+     *
+     * @deprecated 1.8 {@link #listGetRange(long,long)}
+     */
+    @Deprecated
+    List<String> listGetRange(int start, int end);
 
     /**
      * 列表分页获取项（先进先出，从right取）
      */
-    List<String> listGetRange(int start, int end);
+    List<String> listGetRange(long start, long end);
 
     List<String> listGetAll();
 

@@ -30,9 +30,27 @@ public class RedisList {
 
     /**
      * 移除某个位置的项
+     *
+     * @deprecated 1.8 {@link #removeAt(long)}
      */
+    @Deprecated
     public String removeAt(int index) {
         int aryIndex = -index - 1;
+
+        return client.openAndGet(s -> {
+            String element = s.key(listName).listGet(aryIndex);
+            if (element != null) {
+                s.listDel(element);
+            }
+            return element;
+        });
+    }
+
+    /**
+     * 移除某个位置的项
+     */
+    public String removeAt(long index) {
+        long aryIndex = -index - 1;
 
         return client.openAndGet(s -> {
             String element = s.key(listName).listGet(aryIndex);
@@ -53,18 +71,41 @@ public class RedisList {
 
     /**
      * 获取某个位置的项
+     *
+     * @deprecated 1.8 {@link #get(long)}
      */
+    @Deprecated
     public String get(int index) {
         int aryIndex = -index - 1;
         return client.openAndGet(s -> s.key(listName).listGet(aryIndex));
     }
 
     /**
-     * 获取某个位置区间的项
+     * 获取某个位置的项
      */
+    public String get(long index) {
+        long aryIndex = -index - 1;
+        return client.openAndGet(s -> s.key(listName).listGet(aryIndex));
+    }
+
+    /**
+     * 获取某个位置区间的项
+     *
+     * @deprecated 1.8 {@link #getRange(long, long)}
+     */
+    @Deprecated
     public List<String> getRange(int fromIndex, int toIndex) {
         int aryFromIndex = -fromIndex - 1;
         int aryToIndex = -toIndex - 1;
+        return client.openAndGet(s -> s.key(listName).listGetRange(aryFromIndex, aryToIndex));
+    }
+
+    /**
+     * 获取某个位置区间的项
+     */
+    public List<String> getRange(long fromIndex, long toIndex) {
+        long aryFromIndex = -fromIndex - 1;
+        long aryToIndex = -toIndex - 1;
         return client.openAndGet(s -> s.key(listName).listGetRange(aryFromIndex, aryToIndex));
     }
 
@@ -78,10 +119,23 @@ public class RedisList {
 
     /**
      * 设置项的值
-     * */
+     *
+     * @deprecated 1.8 {@link #set(long, String)}
+     *
+     */
+    @Deprecated
     public void set(int index, String newValue) {
         client.open(s -> s.key(listName).listSet(index, newValue));
     }
+
+    /**
+     * 设置项的值
+     *
+     */
+    public void set(long index, String newValue) {
+        client.open(s -> s.key(listName).listSet(index, newValue));
+    }
+
     /**
      * 添加项
      */

@@ -1,4 +1,12 @@
 
+
+### 1.8.4
+
+* 添加 `listSet(long index, String newValue)` 之前 index 是 int
+* 添加 `listGet(long index)` 之前 index 是 int
+* 添加 `listGetRange(long start, long end)` 之前 index 是 int
+* snack4 升为 4.0.28
+
 ### 1.8.3
 
 * snack4 升为 4.0.17

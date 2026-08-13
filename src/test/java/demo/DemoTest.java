@@ -163,7 +163,7 @@ public class DemoTest {
     }
 
     @Test
-    public void test_lock() {
+    public void test_lock() throws Throwable{
         //--- lock 使用
         if (client.getLock("user:121212").tryLock()) {
             assert true;
@@ -172,6 +172,28 @@ public class DemoTest {
             assert false;
             //提示：请不要频繁提交
         }
+
+        System.out.println("-------");
+
+        //--- lock 使用
+        if (client.getLock("user:121212").tryLock()) {
+            assert false;
+        } else {
+            assert true;
+        }
+
+        System.out.println("-------");
+
+        Thread.sleep(4_000L);
+
+        //--- lock 使用
+        if (client.getLock("user:121212").tryLock()) {
+            assert true;
+        } else {
+            assert false;
+        }
+
+        System.out.println("-------");
     }
 
     @Test
